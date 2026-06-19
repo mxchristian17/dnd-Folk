@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Folk · Bard of the College of Valor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0c0a07;--panel:#16110c;--card:#1e1710;--card2:#251e14;
+  --border:#3a2c1c;--border2:#7a5228;
+  --copper:#c17f3a;--gold:#d4a040;--goldbr:#f0c060;
+  --txt:#e8d4a8;--txt2:#a89070;--txt3:#6a5840;
+  --hp-ok:#3d8a50;--hp-warn:#b07a10;--hp-crit:#c04040;
+  --magic:#6040a0;--danger:#c04040;--success:#4a9a60;--warn:#b07a10;
+  --r:6px;--rmd:10px;--rlg:14px;
+  --shadow:0 4px 24px rgba(0,0,0,.7);--glow:0 0 14px rgba(193,127,58,.25);
+  --header-h:52px;--banner-h:0px;--nav-h:58px;
+}
+html{height:100%;scroll-behavior:smooth}
+body{min-height:100%;background:var(--bg);color:var(--txt);font-family:'Crimson Pro',Georgia,serif;font-size:16px;line-height:1.4;overflow-x:hidden;padding-top:calc(var(--header-h) + var(--banner-h));padding-bottom:calc(var(--nav-h) + 4px);background-image:radial-gradient(ellipse at 15% 40%,rgba(60,40,20,.12) 0%,transparent 55%),radial-gradient(ellipse at 85% 10%,rgba(40,30,60,.1) 0%,transparent 50%)}
+h1,h2,h3,h4,.cinzel{font-family:'Cinzel','Times New Roman',serif;letter-spacing:.04em}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ─── HEADER ─────────────────────────── */
+#app-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:200;background:linear-gradient(180deg,var(--panel) 0%,rgba(22,17,12,.97) 100%);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 10px;gap:8px;box-shadow:0 2px 20px rgba(0,0,0,.8);backdrop-filter:blur(4px)}
+#folk-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.14em;white-space:nowrap;text-shadow:0 0 10px rgba(212,160,64,.4)}
+.header-stats{display:flex;gap:4px;flex:1;justify-content:flex-end;overflow:hidden}
+.hstat{display:flex;flex-direction:column;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:2px 5px;min-width:38px;cursor:pointer;transition:border-color .2s}
+.hstat:hover{border-color:var(--border2)}
+.hstat-lbl{font-size:8px;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;font-family:'Cinzel',serif}
+.hstat-val{font-size:14px;font-weight:700;color:var(--txt);font-family:'Cinzel',serif;line-height:1.2}
+.hstat-val.ok{color:var(--success)}.hstat-val.warn{color:var(--warn)}.hstat-val.crit{color:var(--danger);animation:pcrit 1s infinite}
+@keyframes pcrit{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* ─── CONDITION BANNER ───────────────── */
+#cond-banner{position:fixed;top:var(--header-h);left:0;right:0;z-index:190;display:none;flex-direction:column;border-bottom:1px solid rgba(192,64,64,.35);box-shadow:0 3px 12px rgba(0,0,0,.5)}
+#cond-banner.active{display:flex}
+.cb-main{display:flex;align-items:center;gap:6px;padding:5px 10px;overflow-x:auto;scrollbar-width:none;background:linear-gradient(90deg,rgba(192,40,40,.18) 0%,rgba(22,17,12,.97) 100%);min-height:30px}
+.cb-main::-webkit-scrollbar{display:none}
+.cb-lbl{font-family:'Cinzel',serif;font-size:9px;color:var(--txt3);letter-spacing:.1em;white-space:nowrap;flex-shrink:0}
+.cb-pill{flex-shrink:0;font-family:'Cinzel',serif;font-size:9px;padding:2px 8px;border-radius:100px;white-space:nowrap;letter-spacing:.05em}
+.cb-pill.bad{background:rgba(192,64,64,.22);border:1px solid rgba(192,64,64,.5);color:#f08888}
+.cb-pill.warn{background:rgba(180,120,0,.18);border:1px solid rgba(180,120,0,.4);color:#d4a040}
+.cb-pill.spd{background:rgba(32,96,192,.18);border:1px solid rgba(32,96,192,.4);color:#70a0e0}
+.cb-pill.good{background:rgba(64,160,80,.15);border:1px solid rgba(64,160,80,.4);color:#70d090}
+.cb-sep{flex-shrink:0;color:var(--txt3);font-size:10px}
+
+/* ─── BOTTOM NAV ─────────────────────── */
+#bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);z-index:200;background:var(--panel);border-top:1px solid var(--border2);display:flex;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;box-shadow:0 -2px 20px rgba(0,0,0,.6)}
+#bottom-nav::-webkit-scrollbar{display:none}
+.ntab{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:60px;padding:6px 10px 8px;cursor:pointer;border:none;background:transparent;color:var(--txt3);font-family:'Cinzel',serif;font-size:9px;letter-spacing:.05em;transition:color .2s,background .2s;border-top:2px solid transparent;user-select:none}
+.ntab:hover{color:var(--txt2)}.ntab.active{color:var(--gold);border-top-color:var(--gold);background:rgba(212,160,64,.06)}
+.ntab-icon{font-size:18px;line-height:1}.ntab-lbl{white-space:nowrap}
+
+/* ─── SECTIONS ───────────────────────── */
+.section{display:none;padding:14px 12px}.section.active{display:block}
+
+/* ─── CARDS ──────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--rmd);padding:14px;margin-bottom:12px;box-shadow:var(--shadow);position:relative}
+.card.acc{border-color:var(--border2)}.card.glow{box-shadow:var(--shadow),var(--glow)}.card.magic{border-color:var(--magic);background:linear-gradient(135deg,var(--card) 0%,#181028 100%)}
+.card.danger{border-color:var(--danger)}.card.gold-border{border-color:rgba(212,160,64,.35)}.card.dance{border-color:#4080e0;background:linear-gradient(135deg,var(--card) 0%,#0e1a2e 100%)}
+
+.sec-title{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.15em;color:var(--txt3);text-transform:uppercase}
+.sec-title::before,.sec-title::after{content:'';flex:1;height:1px}
+.sec-title::before{background:linear-gradient(to left,var(--border2),transparent)}
+.sec-title::after{background:linear-gradient(to right,var(--border2),transparent)}
+.ctitle{font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--txt3);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ctitle::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ─── CONDITION EFFECTS INLINE ───────── */
+.cond-effects-box{background:rgba(192,40,40,.1);border:1px solid rgba(192,64,64,.3);border-radius:var(--r);padding:10px 12px;margin-bottom:12px}
+.cond-effects-title{font-family:'Cinzel',serif;font-size:9px;color:var(--danger);letter-spacing:.1em;margin-bottom:6px}
+.cond-fx-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(192,64,64,.15);font-size:13px}
+.cond-fx-row:last-child{border-bottom:none}
+.cond-fx-icon{font-size:14px;flex-shrink:0;width:20px;text-align:center}
+.cond-fx-text{flex:1;color:var(--txt2)}
+.cond-fx-badge{font-family:'Cinzel',serif;font-size:9px;padding:2px 7px;border-radius:100px;flex-shrink:0}
+.cond-fx-badge.disadv{background:rgba(192,64,64,.25);border:1px solid rgba(192,64,64,.5);color:#f08080}
+.cond-fx-badge.adv{background:rgba(64,192,80,.2);border:1px solid rgba(64,192,80,.4);color:#70d090}
+.cond-fx-badge.auto{background:rgba(180,120,0,.2);border:1px solid rgba(180,120,0,.4);color:#d4a040}
+.cond-fx-badge.zero{background:rgba(32,96,192,.2);border:1px solid rgba(32,96,192,.4);color:#70a0e0}
+
+/* ─── DISADV WARNING BADGE ───────────── */
+.disadv-warning{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--r);background:rgba(192,64,64,.15);border:1px solid rgba(192,64,64,.4);color:#f08080;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;margin-bottom:8px}
+.adv-note{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--r);background:rgba(64,192,80,.12);border:1px solid rgba(64,192,80,.35);color:#70d090;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;margin-bottom:8px}
+
+/* ─── HP BAR ─────────────────────────── */
+.hp-wrap{background:rgba(0,0,0,.4);border-radius:100px;height:10px;overflow:hidden;margin:8px 0}
+.hp-bar{height:100%;border-radius:100px;transition:width .5s ease,background .5s ease}
+
+/* ─── BUTTONS ────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:var(--r);border:1px solid var(--border2);background:var(--card2);color:var(--txt);font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.07em;cursor:pointer;transition:all .15s;white-space:nowrap;user-select:none;-webkit-user-select:none}
+.btn:hover{background:var(--border2)}.btn:active{transform:scale(.97)}
+.btn.pri{border-color:var(--copper);background:rgba(193,127,58,.12);color:var(--copper)}.btn.pri:hover{background:rgba(193,127,58,.28)}
+.btn.dan{border-color:var(--danger);background:rgba(192,64,64,.1);color:var(--danger)}.btn.dan:hover{background:rgba(192,64,64,.24)}
+.btn.suc{border-color:var(--success);background:rgba(74,154,96,.1);color:var(--success)}.btn.suc:hover{background:rgba(74,154,96,.24)}
+.btn.mag{border-color:var(--magic);background:rgba(96,64,160,.1);color:#b090f0}.btn.mag:hover{background:rgba(96,64,160,.24)}
+.btn.gld{border-color:var(--gold);background:rgba(212,160,64,.1);color:var(--gold)}.btn.gld:hover{background:rgba(212,160,64,.24)}
+.btn.blue{border-color:#4080e0;background:rgba(64,128,224,.12);color:#80b0f0}.btn.blue:hover{background:rgba(64,128,224,.28)}
+.btn.full{width:100%}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}.f1{flex:1}
+
+.adj{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ab{flex:1;min-width:44px;padding:11px 6px;border:1px solid var(--border2);border-radius:var(--r);background:var(--card2);color:var(--txt);font-family:'Cinzel',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center;user-select:none;-webkit-user-select:none}
+.ab:hover,.ab:active{background:var(--border2);transform:scale(.97)}
+.ab.d{border-color:var(--danger);color:var(--danger)}.ab.d:hover{background:rgba(192,64,64,.2)}
+.ab.h{border-color:var(--success);color:var(--success)}.ab.h:hover{background:rgba(74,154,96,.2)}
+.ab.w{flex:2}
+
+/* ─── INPUTS ─────────────────────────── */
+input,textarea,select{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);color:var(--txt);font-family:'Crimson Pro',Georgia,serif;font-size:15px;padding:8px 12px;outline:none;width:100%;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--copper);box-shadow:0 0 0 2px rgba(193,127,58,.2)}
+textarea{resize:vertical;min-height:100px}
+select option{background:var(--card2)}
+
+/* ─── DANCING SWORD WIDGET ───────────── */
+.sword-status{display:flex;align-items:center;gap:10px;padding:12px;border-radius:var(--r);margin-bottom:12px}
+.sword-status.grounded{background:rgba(58,44,28,.3);border:1px solid var(--border2)}
+.sword-status.hovering{background:rgba(32,80,224,.12);border:1px solid rgba(64,128,224,.5);animation:sword-glow 2.5s ease-in-out infinite}
+@keyframes sword-glow{0%,100%{box-shadow:0 0 8px rgba(64,128,224,.2)}50%{box-shadow:0 0 20px rgba(64,128,224,.4),0 0 40px rgba(64,128,224,.15)}}
+.sword-icon-big{font-size:36px;filter:drop-shadow(0 0 6px rgba(64,128,224,.5))}
+.sword-atk-pips{display:flex;gap:8px;margin:8px 0}
+.sword-pip{width:28px;height:28px;border-radius:50%;border:2px solid #4080e0;background:transparent;display:inline-flex;align-items:center;justify-content:center;font-size:12px;transition:all .3s}
+.sword-pip.used{background:#4080e0;box-shadow:0 0 8px #4080e0}.sword-pip.used::after{content:'✦';color:#fff;font-size:10px}
+.sword-pip-lbl{font-family:'Cinzel',serif;font-size:9px;color:var(--txt3);letter-spacing:.1em;margin-bottom:4px}
+
+/* ─── STAT BOXES ─────────────────────── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-box{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .2s}
+.stat-box:hover{border-color:var(--border2)}
+.stat-name{font-family:'Cinzel',serif;font-size:9px;color:var(--txt3);letter-spacing:.1em}
+.stat-score{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--txt);line-height:1.2}
+.stat-mod{font-size:14px;color:var(--gold);font-weight:600;margin-top:2px}
+
+/* ─── SKILL ROWS ─────────────────────── */
+.skill-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(58,44,28,.5);font-size:14px}
+.skill-row:last-child{border-bottom:none}
+.pip{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--txt3);flex-shrink:0}
+.pip.prof{background:var(--copper);border-color:var(--copper)}.pip.expert{background:var(--gold);border-color:var(--gold);box-shadow:0 0 5px rgba(212,160,64,.5)}
+.sk-name{flex:1;color:var(--txt2)}.sk-ab{font-size:11px;color:var(--txt3);font-family:'Cinzel',serif}.sk-bon{font-family:'Cinzel',serif;font-weight:700;min-width:28px;text-align:right}
+
+/* ─── SPELL SLOTS ────────────────────── */
+.slot-pip{width:32px;height:32px;border-radius:50%;border:2px solid var(--magic);background:transparent;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.slot-pip.used{background:rgba(96,64,160,.25);opacity:.5}.slot-pip.used::after{content:'✦';color:var(--txt3)}
+.slot-pip:not(.used):hover{background:rgba(96,64,160,.3);box-shadow:0 0 8px var(--magic)}
+.slots-lbl{font-family:'Cinzel',serif;font-size:10px;color:var(--txt3);letter-spacing:.1em;margin-bottom:6px}
+.slots-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+
+/* ─── SPELL CARDS ────────────────────── */
+.spell-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rmd);padding:12px;margin-bottom:10px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.spell-card:hover{border-color:var(--border2)}.spell-card.conc-card{border-color:rgba(32,80,160,.5)}.spell-card.cantrip-card{border-color:rgba(96,64,160,.4)}
+.spell-name{font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:var(--txt)}
+.spell-badge{font-family:'Cinzel',serif;font-size:9px;padding:2px 7px;border-radius:100px;white-space:nowrap;flex-shrink:0}
+.badge-0{background:rgba(96,64,160,.3);color:#b090f0;border:1px solid rgba(96,64,160,.5)}
+.badge-1{background:rgba(58,150,90,.2);color:#60c080;border:1px solid rgba(58,150,90,.4)}
+.badge-2{background:rgba(60,100,200,.2);color:#70a0f0;border:1px solid rgba(60,100,200,.4)}
+.badge-3{background:rgba(180,100,20,.2);color:#d08040;border:1px solid rgba(180,100,20,.4)}
+.badge-4{background:rgba(180,40,40,.2);color:#d06060;border:1px solid rgba(180,40,40,.4)}
+.spell-meta{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}
+.stag{font-size:11px;color:var(--txt3);background:var(--card2);border-radius:3px;padding:1px 5px}
+.spell-desc{font-size:14px;color:var(--txt2);line-height:1.55;display:none;margin-top:8px}
+.spell-card.open .spell-desc{display:block}
+.conc-badge{font-size:11px;padding:2px 8px;border-radius:3px;background:rgba(32,80,160,.25);color:#70a0e0;border:1px solid rgba(32,80,160,.4);display:inline-flex;align-items:center;gap:4px}
+.cast-btn{padding:5px 13px;border-radius:var(--r);border:1px solid var(--magic);background:rgba(96,64,160,.18);color:#b090f0;font-family:'Cinzel',serif;font-size:10px;cursor:pointer;transition:all .2s;margin-right:4px;margin-top:6px}
+.cast-btn:hover{background:rgba(96,64,160,.38)}.cast-actions{margin-top:8px}
+
+/* ─── BI PIPS ────────────────────────── */
+.bi-pip{width:36px;height:36px;border-radius:50%;border:2px solid var(--copper);background:transparent;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center}
+.bi-pip.on{background:var(--copper)}.bi-pip.on::before{content:'♪';color:var(--bg)}
+.bi-pip:not(.on):hover{background:rgba(193,127,58,.2)}
+.bi-pips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+
+/* ─── ACTION TOKENS ──────────────────── */
+.act-token{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;background:var(--card2);border:2px solid var(--border);border-radius:var(--rmd);cursor:pointer;transition:all .2s}
+.act-token.used{opacity:.4;border-style:dashed}.act-token:not(.used):hover{border-color:var(--copper)}
+.act-icon{font-size:22px}.act-name{font-family:'Cinzel',serif;font-size:8px;color:var(--txt3);letter-spacing:.08em}.act-state{font-size:11px;color:var(--txt3)}
+
+/* ─── DEATH SAVES ────────────────────── */
+.ds-pip{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid var(--border);transition:all .2s;display:inline-flex;align-items:center;justify-content:center}
+.ds-pip.succ{border-color:var(--success)}.ds-pip.succ.on{background:var(--success)}
+.ds-pip.fail{border-color:var(--danger)}.ds-pip.fail.on{background:var(--danger)}
+
+/* ─── CONCENTRATION ──────────────────── */
+.conc-wrap{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r);background:rgba(32,80,160,.12);border:1px solid rgba(32,80,160,.35);cursor:pointer}
+.conc-dot{width:10px;height:10px;border-radius:50%;background:#4080c0;box-shadow:0 0 8px #4080c0;flex-shrink:0;animation:pconc 2s infinite}
+@keyframes pconc{0%,100%{box-shadow:0 0 8px #4080c0}50%{box-shadow:0 0 18px #4080c0,0 0 28px rgba(64,128,192,.35)}}
+.conc-text{font-family:'Cinzel',serif;font-size:12px;color:#70a0e0;flex:1}
+
+/* ─── FILTER BAR ─────────────────────── */
+.fbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.fbar::-webkit-scrollbar{display:none}
+.fchip{flex-shrink:0;padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:var(--card2);color:var(--txt3);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s}
+.fchip.on{border-color:var(--magic);background:rgba(96,64,160,.2);color:#b090f0}.fchip:hover:not(.on){border-color:var(--border2)}
+
+/* ─── CONDITION CHIPS ────────────────── */
+.cond-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:13px;cursor:pointer;transition:all .2s;margin:3px}
+.cond-chip.on{background:rgba(192,64,64,.18);border:1px solid var(--danger);color:var(--danger)}
+.cond-chip.off{background:var(--card2);border:1px solid var(--border);color:var(--txt2)}.cond-chip.off:hover{border-color:var(--border2)}
+
+/* ─── VARA CARD ──────────────────────── */
+.vara-hero{text-align:center;padding:22px 16px;background:linear-gradient(135deg,#1a1228 0%,#0c0a07 50%,#1a1208 100%);border-radius:var(--rmd);border:1px solid var(--border2);margin-bottom:12px;position:relative;overflow:hidden}
+.vara-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(193,127,58,.1) 0%,transparent 60%)}
+.vara-name{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);text-shadow:0 0 18px rgba(212,160,64,.4);margin-bottom:4px}
+.vara-sub{font-size:13px;color:var(--txt3);font-style:italic;letter-spacing:.06em}
+.vara-icon{font-size:52px;margin-bottom:10px;position:relative;z-index:1}
+.vara-eff{background:var(--card2);border:1px solid var(--border);border-left:3px solid var(--copper);border-radius:0 var(--r) var(--r) 0;padding:10px 12px;margin-bottom:8px}
+.vara-eff-name{font-family:'Cinzel',serif;font-size:10px;color:var(--copper);letter-spacing:.1em;margin-bottom:4px}
+.vara-eff-desc{font-size:14px;color:var(--txt2)}
+
+/* ─── FEATURE & ITEM CARDS ───────────── */
+.feat-card{background:var(--card2);border:1px solid var(--border);border-left:3px solid var(--copper);border-radius:0 var(--r) var(--r) 0;padding:10px 12px;margin-bottom:8px}
+.feat-name{font-family:'Cinzel',serif;font-size:11px;color:var(--copper);margin-bottom:4px}
+.feat-desc{font-size:14px;color:var(--txt2);line-height:1.5}
+.item-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(58,44,28,.5)}
+.item-row:last-child{border-bottom:none}
+.item-icon{font-size:20px;flex-shrink:0}.item-name{font-size:15px;color:var(--txt)}.item-desc2{font-size:13px;color:var(--txt3)}
+
+/* ─── DICE ───────────────────────────── */
+.dice-result{background:var(--card2);border:1px solid var(--border2);border-radius:var(--rmd);padding:16px;text-align:center;margin-bottom:12px;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dice-total{font-family:'Cinzel',serif;font-size:60px;font-weight:700;color:var(--gold);line-height:1;text-shadow:0 0 24px rgba(212,160,64,.35)}
+.dice-breakdown{font-size:13px;color:var(--txt3);margin-top:4px}
+.dice-label2{font-size:11px;color:var(--txt3);margin-bottom:6px;font-family:'Cinzel',serif;letter-spacing:.1em}
+.roll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.roll-btn{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:10px;cursor:pointer;transition:all .15s;text-align:left;position:relative}
+.roll-btn:hover{border-color:var(--border2);background:var(--border)}.roll-btn:active{transform:scale(.97)}
+.rb-name{font-family:'Cinzel',serif;font-size:11px;color:var(--txt);display:block}
+.rb-dice{font-size:12px;color:var(--txt3);display:block;margin-top:2px}
+.rb-badge{position:absolute;top:4px;right:4px;font-family:'Cinzel',serif;font-size:8px;padding:1px 5px;border-radius:100px}
+.rb-badge.dis{background:rgba(192,64,64,.25);border:1px solid rgba(192,64,64,.5);color:#f08080}
+.rb-badge.adv{background:rgba(64,192,80,.2);border:1px solid rgba(64,192,80,.4);color:#70d090}
+
+/* ─── NOTES ──────────────────────────── */
+.note-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none}
+.note-tabs::-webkit-scrollbar{display:none}
+.note-tab{flex-shrink:0;padding:5px 13px;border-radius:100px;border:1px solid var(--border);background:var(--card2);color:var(--txt3);font-family:'Cinzel',serif;font-size:9px;letter-spacing:.06em;cursor:pointer;transition:all .15s}
+.note-tab.on{border-color:var(--copper);background:rgba(193,127,58,.1);color:var(--copper)}
+
+/* ─── GOLD ───────────────────────────── */
+.gold-box{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center}
+.gold-val{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--gold);display:block}
+.gold-name2{font-size:11px;color:var(--txt3)}
+
+/* ─── MODALS ─────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.overlay.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:var(--rlg) var(--rlg) 0 0;padding:20px 16px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;animation:slide-up .3s ease}
+@keyframes slide-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-title{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);margin-bottom:16px;text-align:center}
+
+/* ─── TOAST ──────────────────────────── */
+#toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(16px);background:var(--card);border:1px solid var(--border2);border-radius:var(--rlg);padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.07em;color:var(--txt);z-index:500;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ─── MISC ───────────────────────────── */
+.row{display:flex;gap:8px;align-items:center}.jb{justify-content:space-between}.fw{flex-wrap:wrap}
+.divider{height:1px;background:var(--border);margin:12px 0}
+.tc{text-align:center}.ts{font-size:13px}.txs{font-size:11px}
+.muted{color:var(--txt3)}.c2{color:var(--txt2)}.copper{color:var(--copper)}.gold{color:var(--gold)}.magic-c{color:#b090f0}.danger-c{color:var(--danger)}.success-c{color:var(--success)}
+.ital{font-style:italic}.bold{font-weight:600}
+.big-num{font-family:'Cinzel',serif;font-size:54px;font-weight:700;line-height:1;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.mb4{margin-bottom:4px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mt8{margin-top:8px}.mt12{margin-top:12px}
+.spec-note{color:var(--gold);font-size:12px;font-style:italic;margin-top:6px}.up-note{color:var(--txt3);font-size:12px;margin-top:4px}
+</style>
+</head>
+<body>
+
+<header id="app-header">
+  <div id="folk-title">FOLK</div>
+  <div class="header-stats">
+    <div class="hstat" onclick="showSection('combat')"><span class="hstat-lbl">HP</span><span class="hstat-val" id="hdr-hp">59</span></div>
+    <div class="hstat"><span class="hstat-lbl">AC</span><span class="hstat-val">18</span></div>
+    <div class="hstat"><span class="hstat-lbl">DC</span><span class="hstat-val">16</span></div>
+    <div class="hstat"><span class="hstat-lbl">ATK</span><span class="hstat-val">+8</span></div>
+    <div class="hstat" id="hdr-spd-wrap"><span class="hstat-lbl">SPD</span><span class="hstat-val" id="hdr-spd">30ft</span></div>
+  </div>
+</header>
+
+<div id="cond-banner"><div class="cb-main" id="cb-inner"></div></div>
+
+<div id="secs">
+  <div class="section active" id="sec-dashboard"></div>
+  <div class="section" id="sec-combat"></div>
+  <div class="section" id="sec-spellbook"></div>
+  <div class="section" id="sec-bard"></div>
+  <div class="section" id="sec-inventory"></div>
+  <div class="section" id="sec-vara"></div>
+  <div class="section" id="sec-conditions"></div>
+  <div class="section" id="sec-notes"></div>
+  <div class="section" id="sec-dice"></div>
+</div>
+
+<nav id="bottom-nav">
+  <button class="ntab active" data-s="dashboard" onclick="showSection('dashboard')"><span class="ntab-icon">🏠</span><span class="ntab-lbl">Home</span></button>
+  <button class="ntab" data-s="combat" onclick="showSection('combat')"><span class="ntab-icon">⚔️</span><span class="ntab-lbl">Combat</span></button>
+  <button class="ntab" data-s="spellbook" onclick="showSection('spellbook')"><span class="ntab-icon">📖</span><span class="ntab-lbl">Spells</span></button>
+  <button class="ntab" data-s="bard" onclick="showSection('bard')"><span class="ntab-icon">🎵</span><span class="ntab-lbl">Bard</span></button>
+  <button class="ntab" data-s="inventory" onclick="showSection('inventory')"><span class="ntab-icon">🎒</span><span class="ntab-lbl">Inv.</span></button>
+  <button class="ntab" data-s="vara" onclick="showSection('vara')"><span class="ntab-icon">🪄</span><span class="ntab-lbl">Staff</span></button>
+  <button class="ntab" data-s="conditions" onclick="showSection('conditions')"><span class="ntab-icon">💀</span><span class="ntab-lbl">Status</span></button>
+  <button class="ntab" data-s="notes" onclick="showSection('notes')"><span class="ntab-icon">📝</span><span class="ntab-lbl">Notes</span></button>
+  <button class="ntab" data-s="dice" onclick="showSection('dice')"><span class="ntab-icon">🎲</span><span class="ntab-lbl">Dice</span></button>
+</nav>
+
+<div id="toast"></div>
+
+<!-- MODALS -->
+<div class="overlay" id="m-hp" onclick="if(event.target===this)closeModal('m-hp')">
+  <div class="modal"><div class="modal-title">Adjust Hit Points</div>
+    <input type="number" id="mi-hp" placeholder="Amount..." style="font-size:22px;text-align:center;margin-bottom:12px">
+    <div class="btn-row mb4"><button class="btn dan f1" onclick="applyHP('dmg')">⚔️ Damage</button><button class="btn suc f1" onclick="applyHP('heal')">💚 Heal</button></div>
+    <button class="btn full" onclick="closeModal('m-hp')">Cancel</button></div>
+</div>
+<div class="overlay" id="m-temp" onclick="if(event.target===this)closeModal('m-temp')">
+  <div class="modal"><div class="modal-title">Temporary Hit Points</div>
+    <input type="number" id="mi-temp" placeholder="Temp HP amount..." style="margin-bottom:12px">
+    <div class="btn-row"><button class="btn pri f1" onclick="applyTempHP()">Set</button><button class="btn f1" onclick="closeModal('m-temp')">Cancel</button></div></div>
+</div>
+<div class="overlay" id="m-conc" onclick="if(event.target===this)closeModal('m-conc')">
+  <div class="modal"><div class="modal-title">Concentration</div>
+    <input type="text" id="mi-conc" placeholder="Spell name..." style="margin-bottom:12px">
+    <div class="btn-row mb8"><button class="btn mag f1" onclick="setConc()">🔵 Concentrate</button><button class="btn dan f1" onclick="breakConc()">✕ Break</button></div>
+    <button class="btn full" onclick="closeModal('m-conc')">Cancel</button></div>
+</div>
+<div class="overlay" id="m-custom-spell" onclick="if(event.target===this)closeModal('m-custom-spell')">
+  <div class="modal"><div class="modal-title">Add Custom Spell</div>
+    <input id="cs-name" placeholder="Spell name" style="margin-bottom:8px">
+    <select id="cs-level" style="margin-bottom:8px"><option value="0">Cantrip</option><option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option></select>
+    <input id="cs-cast" placeholder="Casting time" style="margin-bottom:8px">
+    <input id="cs-range" placeholder="Range (e.g. 60 ft)" style="margin-bottom:8px">
+    <input id="cs-dur" placeholder="Duration" style="margin-bottom:8px">
+    <textarea id="cs-desc" placeholder="Description..." style="margin-bottom:8px;min-height:80px"></textarea>
+    <div class="btn-row"><button class="btn pri f1" onclick="addCustomSpell()">Add</button><button class="btn f1" onclick="closeModal('m-custom-spell')">Cancel</button></div></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   FOLK — DND 2024 CHARACTER MANAGER v3.0
+   Bard of the College of Valor · Level 8
+   + Dancing Sword · Condition Effects
+   ══════════════════════════════════════════ */
+
+// ─── STATIC DATA ──────────────────────
+const CHAR={name:'Folk',title:'Bard of the College of Valor',race:'Human',level:8,cls:'Bard',sub:'College of Valor',bg:'Criminal',prof:3,maxHP:59,AC:18,DC:16,atkBonus:8,ini:2,baseSpeed:30,hitDie:8,
+  scores:{STR:8,DEX:15,CON:14,INT:10,WIS:10,CHA:19},
+  savingThrows:{STR:false,DEX:true,CON:false,INT:false,WIS:false,CHA:true},
+  skills:{'Acrobatics':{ab:'DEX',p:false,e:false},'Arcana':{ab:'INT',p:false,e:false},'Athletics':{ab:'STR',p:true,e:false},'Deception':{ab:'CHA',p:true,e:true},'History':{ab:'INT',p:false,e:false},'Insight':{ab:'WIS',p:false,e:false},'Intimidation':{ab:'CHA',p:false,e:false},'Investigation':{ab:'INT',p:false,e:false},'Sleight of Hand':{ab:'DEX',p:true,e:false},'Medicine':{ab:'WIS',p:false,e:false},'Nature':{ab:'INT',p:false,e:false},'Perception':{ab:'WIS',p:true,e:true},'Performance':{ab:'CHA',p:true,e:true},'Persuasion':{ab:'CHA',p:true,e:true},'Religion':{ab:'INT',p:false,e:false},'Stealth':{ab:'DEX',p:true,e:false},'Survival':{ab:'WIS',p:false,e:false},'Animal Handling':{ab:'WIS',p:false,e:false}},
+  equipment:[{icon:'🛡️',name:'Breastplate',desc:'Base AC 14 + DEX (max +2)'},{icon:'🛡️',name:'Shield',desc:'+2 AC'},{icon:'🪄',name:'Vara del Juglar',desc:'Arcane focus · Rare magic item · Attuned',magic:true},{icon:'🎵',name:'Harmonica',desc:'Bardic instrument — worn around the neck'}],
+  weapons:[{name:'Dagger',atk:5,dmg:'1d4+2 piercing',notes:'Light · Finesse · Thrown'},{name:'Short Sword',atk:5,dmg:'1d6+2 piercing',notes:'Light · Finesse'}]
+};
+
+function abilMod(s){return Math.floor((s-10)/2)}
+function fmtMod(n){return(n>=0?'+':'')+n}
+function skillVal(sk){const s=CHAR.skills[sk];if(!s)return 0;const b=abilMod(CHAR.scores[s.ab]);if(s.e)return b+CHAR.prof*2;if(s.p)return b+CHAR.prof;return b+Math.floor(CHAR.prof/2)}
+function saveVal(ab){return abilMod(CHAR.scores[ab])+(CHAR.savingThrows[ab]?CHAR.prof:0)}
+
+// ─── CONDITION EFFECTS ENGINE ─────────
+const CONDITIONS_DB={
+  'Blinded':{icon:'🌑',color:'#888',desc:"Can't see. Your attack rolls have DISADVANTAGE. Attacks against you have ADVANTAGE.",
+    effects:[{on:'your_attacks',type:'disadv',text:'DISADV on your attacks'},{on:'attacks_vs_you',type:'adv',text:'ADV on attacks vs you'}]},
+  'Charmed':{icon:'💫',color:'#c080e0',desc:"Can't attack the charmer. Charmer has ADV on CHA checks against you.",
+    effects:[{on:'roleplay',type:'warn',text:"Can't attack charmer"}]},
+  'Deafened':{icon:'🔇',color:'#888',desc:"Can't hear. Auto-fail checks requiring hearing.",
+    effects:[{on:'checks',type:'warn',text:'Auto-fail hearing checks'}]},
+  'Exhausted':{icon:'😫',color:'#c0802c',desc:'See exhaustion level tracker.',effects:[]},
+  'Frightened':{icon:'😱',color:'#c04040',desc:'DISADV on attacks & checks while source in sight. Cannot move closer to source.',
+    effects:[{on:'your_attacks',type:'disadv',text:'DISADV attacks & checks (source visible)'},{on:'movement',type:'warn',text:"Can't move toward source"}]},
+  'Grappled':{icon:'🤜',color:'#808040',desc:'Speed is 0.',
+    effects:[{on:'speed',type:'zero',text:'Speed 0'}]},
+  'Incapacitated':{icon:'😶',color:'#888',desc:"Can't take actions or reactions.",
+    effects:[{on:'actions',type:'zero',text:'No actions or reactions'}]},
+  'Invisible':{icon:'👻',color:'#80c0ff',desc:"Can't be seen. Your attack rolls have ADVANTAGE. Attacks vs you have DISADVANTAGE.",
+    effects:[{on:'your_attacks',type:'adv',text:'ADV on your attacks'},{on:'attacks_vs_you',type:'disadv',text:'DISADV on attacks vs you'}]},
+  'Paralyzed':{icon:'⚡',color:'#c0c040',desc:'Incapacitated. Speed 0. Auto-fail STR & DEX saves. Attacks vs you have ADV. Melee hits within 5 ft are crits.',
+    effects:[{on:'speed',type:'zero',text:'Speed 0'},{on:'saves',type:'zero',text:'Auto-fail STR & DEX saves'},{on:'attacks_vs_you',type:'adv',text:'ADV on attacks vs you + crits in 5 ft'},{on:'actions',type:'zero',text:'Incapacitated'}]},
+  'Petrified':{icon:'🗿',color:'#a0a0a0',desc:'Stone. Incapacitated. Speed 0. Resistance all damage.',
+    effects:[{on:'speed',type:'zero',text:'Speed 0'},{on:'actions',type:'zero',text:'Incapacitated'},{on:'defense',type:'adv',text:'Resistance to all damage'}]},
+  'Poisoned':{icon:'☠️',color:'#40c040',desc:'DISADV on attack rolls and ability checks.',
+    effects:[{on:'your_attacks',type:'disadv',text:'DISADV on attacks & ability checks'}]},
+  'Prone':{icon:'🔽',color:'#a08040',desc:'Crawling only (half speed). Melee attacks vs you have ADV. Ranged attacks vs you have DISADV. Your attacks have DISADV.',
+    effects:[{on:'speed',type:'disadv',text:'Crawl only (½ speed)'},{on:'your_attacks',type:'disadv',text:'DISADV on your attacks'},{on:'attacks_vs_you',type:'warn',text:'Melee ADV · Ranged DISADV vs you'}]},
+  'Restrained':{icon:'⛓️',color:'#c08040',desc:'Speed 0. Attacks vs you ADV. Your attacks DISADV. DEX saves DISADV.',
+    effects:[{on:'speed',type:'zero',text:'Speed 0'},{on:'your_attacks',type:'disadv',text:'DISADV on your attacks'},{on:'attacks_vs_you',type:'adv',text:'ADV on attacks vs you'},{on:'saves',type:'disadv',text:'DISADV on DEX saves'}]},
+  'Stunned':{icon:'💥',color:'#c0a040',desc:'Incapacitated. Cannot move. Auto-fail STR & DEX saves. Attacks vs you have ADV.',
+    effects:[{on:'speed',type:'zero',text:'Speed 0'},{on:'actions',type:'zero',text:'Incapacitated'},{on:'saves',type:'zero',text:'Auto-fail STR & DEX saves'},{on:'attacks_vs_you',type:'adv',text:'ADV on attacks vs you'}]},
+  'Unconscious':{icon:'💤',color:'#6060a0',desc:'Incapacitated. Speed 0. Auto-fail STR & DEX saves. Attacks ADV. Melee crits within 5 ft. You are Prone.',
+    effects:[{on:'speed',type:'zero',text:'Speed 0'},{on:'actions',type:'zero',text:'Incapacitated'},{on:'saves',type:'zero',text:'Auto-fail STR & DEX saves'},{on:'attacks_vs_you',type:'adv',text:'ADV + crits in 5 ft vs you'}]},
+};
+
+const EXHAUST_DESC=['No exhaustion','Disadvantage on ability checks','Speed halved','Disadv. on attacks & saves','Max HP halved','Speed reduced to 5 ft','💀 Dead'];
+
+// ─── COMPUTED CONDITION EFFECTS ───────
+function effectiveSpeed(){
+  const c=S.conds;
+  if(c.includes('Grappled')||c.includes('Restrained')||c.includes('Paralyzed')||c.includes('Stunned')||c.includes('Unconscious'))return 0;
+  let spd=CHAR.baseSpeed;
+  if(c.includes('Prone'))spd=Math.floor(spd/2);
+  if(S.exhaustion>=5)return 5;
+  if(S.exhaustion>=2)spd=Math.floor(spd/2);
+  return spd;
+}
+function hasAttackDisadv(){
+  return S.conds.some(c=>['Blinded','Prone','Poisoned','Frightened','Restrained'].includes(c))||S.exhaustion>=3;
+}
+function hasAttackAdv(){return S.conds.includes('Invisible')}
+function attacksVsYouAdv(){return S.conds.some(c=>['Blinded','Prone','Restrained','Paralyzed','Stunned','Unconscious'].includes(c))}
+function isIncapacitated(){return S.conds.some(c=>['Incapacitated','Paralyzed','Petrified','Stunned','Unconscious'].includes(c))}
+function autoFailSaves(){
+  const c=S.conds;
+  const str=c.some(x=>['Paralyzed','Stunned','Unconscious'].includes(x));
+  const dex=c.some(x=>['Paralyzed','Restrained','Stunned','Unconscious'].includes(x));
+  return{str,dex};
+}
+
+function getCondEffects(){
+  const fx=[];const c=S.conds;
+  const spd=effectiveSpeed();
+  if(spd!==CHAR.baseSpeed){
+    const z=spd===0;
+    fx.push({cls:z?'bad':'warn',text:`🏃 Speed: ${spd} ft${z?' (ZERO!)':''}`});
+  }
+  c.forEach(name=>{
+    const cd=CONDITIONS_DB[name];
+    if(!cd)return;
+    cd.effects.forEach(e=>{
+      fx.push({cls:e.type==='disadv'?'bad':e.type==='adv'?'good':e.type==='zero'?'spd':'warn',text:`${cd.icon} ${name}: ${e.text}`});
+    });
+  });
+  if(S.exhaustion>0)fx.push({cls:S.exhaustion>=3?'bad':'warn',text:`😫 Exhaustion ${S.exhaustion}: ${EXHAUST_DESC[S.exhaustion]}`});
+  if(hasAttackAdv())fx.push({cls:'good',text:'🎯 ADV on your attacks (Invisible)'});
+  return fx;
+}
+
+function updateCondBanner(){
+  const banner=document.getElementById('cond-banner');
+  const inner=document.getElementById('cb-inner');
+  const hdrSpd=document.getElementById('hdr-spd');
+  if(!banner||!inner)return;
+  const fx=getCondEffects();
+  const spd=effectiveSpeed();
+  if(hdrSpd){
+    hdrSpd.textContent=spd+'ft';
+    hdrSpd.style.color=spd===0?'var(--danger)':spd<CHAR.baseSpeed?'var(--warn)':'';
+  }
+  if(fx.length===0){
+    banner.classList.remove('active');
+    inner.innerHTML='';
+    document.documentElement.style.setProperty('--banner-h','0px');
+  }else{
+    inner.innerHTML='<span class="cb-lbl">⚠ ACTIVE:</span>'+fx.map(f=>`<span class="cb-pill ${f.cls}">${f.text}</span>`).join('');
+    banner.classList.add('active');
+    requestAnimationFrame(()=>{
+      const h=banner.offsetHeight;
+      document.documentElement.style.setProperty('--banner-h',h+'px');
+    });
+  }
+}
+
+function condEffectsBoxHTML(){
+  const fx=getCondEffects();if(fx.length===0)return'';
+  const rows=[];
+  const c=S.conds;
+  if(isIncapacitated())rows.push({icon:'😶',text:'Incapacitated — no actions or reactions',badge:'INCAP',cls:'auto'});
+  if(hasAttackDisadv())rows.push({icon:'🎯',text:'Your attack rolls',badge:'DISADVANTAGE',cls:'disadv'});
+  if(hasAttackAdv())rows.push({icon:'🎯',text:'Your attack rolls',badge:'ADVANTAGE',cls:'adv'});
+  if(attacksVsYouAdv())rows.push({icon:'🛡️',text:'Attacks against you',badge:'ADVANTAGE',cls:'adv'});
+  const {str,dex}=autoFailSaves();
+  if(str)rows.push({icon:'💀',text:'STR saving throws',badge:'AUTO-FAIL',cls:'auto'});
+  if(dex)rows.push({icon:'💀',text:'DEX saving throws',badge:'AUTO-FAIL',cls:'auto'});
+  const spd=effectiveSpeed();
+  if(spd!==CHAR.baseSpeed)rows.push({icon:'🏃',text:`Movement speed: ${spd} ft${spd===0?' — CANNOT MOVE':''}`,badge:spd===0?'ZERO':'HALVED',cls:spd===0?'auto':'disadv'});
+  if(c.includes('Prone'))rows.push({icon:'🔽',text:'Melee attacks against you: ADV · Ranged vs you: DISADV',badge:'PRONE',cls:'disadv'});
+  if(S.exhaustion>=1)rows.push({icon:'😫',text:`Exhaustion ${S.exhaustion}: ${EXHAUST_DESC[S.exhaustion]}`,badge:'EXHAUSTED',cls:S.exhaustion>=3?'auto':'disadv'});
+  if(rows.length===0)return'';
+  return`<div class="cond-effects-box">
+    <div class="cond-effects-title">⚠ ACTIVE CONDITION EFFECTS</div>
+    ${rows.map(r=>`<div class="cond-fx-row"><span class="cond-fx-icon">${r.icon}</span><span class="cond-fx-text">${r.text}</span><span class="cond-fx-badge ${r.cls}">${r.badge}</span></div>`).join('')}
+  </div>`;
+}
+
+// ─── BARD FEATURES ────────────────────
+const BARD_FEATS=[
+  {name:'Bardic Inspiration',lv:1,desc:'Bonus Action: grant a d8 die to a creature within 60 ft. It adds it to an attack, check, or save within 1 hour. 4 uses/rest.'},
+  {name:'Jack of All Trades',lv:2,desc:'Add +1 (half prof) to any ability check you are not proficient in.'},
+  {name:'Song of Rest',lv:2,desc:'Friendly creatures who can hear you regain an extra 1d8 HP when spending Hit Dice during a short rest.'},
+  {name:'Expertise',lv:3,desc:'Double proficiency bonus for Deception, Persuasion, Performance, Perception (★★ in Skills).'},
+  {name:'Font of Inspiration',lv:5,desc:'Regain all Bardic Inspiration on a short OR long rest.'},
+  {name:'Countercharm',lv:6,desc:'Action: perform to counter charm and fear effects for friendly creatures within 30 ft (advantage on those saves).'},
+  {name:'Magical Secrets',lv:6,desc:'Learned Counterspell and Dispel Magic from any class list.'},
+  {name:'Combat Inspiration (College of Valor)',lv:3,desc:'Bardic die can add damage after hitting, or reduce incoming damage as a reaction.'},
+  {name:'Extra Attack (College of Valor)',lv:6,desc:'Attack twice when you take the Attack action.'},
+  {name:'Battle Magic (College of Valor)',lv:6,desc:'When you cast a spell as your action, you can make one weapon attack as a Bonus Action.'},
+  {name:'War Caster (Feat)',lv:8,desc:'Advantage on CON saves to maintain Concentration. Cast spells as Opportunity Attacks. Somatic components with weapon+shield in hand.'},
+];
+
+// ─── SPELLS ───────────────────────────
+const SPELLS_DB={
+  'Vicious Mockery':{lv:0,school:'Enchantment',ct:'1 Action',range:'60 ft',comp:'V',dur:'Instantaneous',conc:false,dmg:'2d4 psychic',save:'WIS',tags:['damage','control'],desc:'WIS save DC 16 or take 2d4 psychic damage and have disadvantage on its next attack roll.',upc:'3d4 (lv5) · 4d4 (lv11) · 5d4 (lv17)'},
+  'Mage Hand':{lv:0,school:'Conjuration',ct:'1 Action',range:'30 ft',comp:'V, S',dur:'1 minute',conc:false,tags:['utility'],desc:'Spectral floating hand. Manipulate objects up to 10 lbs, open unlocked containers, pour vials. Cannot attack.'},
+  'Minor Illusion':{lv:0,school:'Illusion',ct:'1 Action',range:'30 ft',comp:'S, M',dur:'1 minute',conc:false,tags:['utility'],desc:'Create a sound or image (5 ft cube). INT check DC 13 to identify as illusory.'},
+  'Command':{lv:1,school:'Enchantment',ct:'1 Action',range:'60 ft',comp:'V',dur:'1 round',conc:false,save:'WIS',tags:['control'],special:'⚡ VARA: Free use 1×/Long Rest. +1 creature if command is a rhyme.',desc:'One-word command to a creature. WIS save DC 16 or follow the command on its next turn.',upc:'+1 creature per slot level above 1st'},
+  'Healing Word':{lv:1,school:'Evocation',ct:'1 Bonus Action',range:'60 ft',comp:'V',dur:'Instantaneous',conc:false,dmg:'1d4+4 healing',tags:['healing'],desc:'A creature regains 1d4+4 HP. Cast as Bonus Action.',upc:'+1d4 per slot level above 1st'},
+  'Heroism':{lv:1,school:'Enchantment',ct:'1 Action',range:'Touch',comp:'V, S',dur:'Conc., 1 minute',conc:true,tags:['support'],desc:'Target immune to Frightened + gains 4 temp HP at start of each of its turns.',upc:'+1 creature per slot level above 1st'},
+  'Dissonant Whispers':{lv:1,school:'Enchantment',ct:'1 Action',range:'60 ft',comp:'V',dur:'Instantaneous',conc:false,dmg:'3d6 psychic',save:'WIS',tags:['damage','control'],desc:'WIS save DC 16 or take 3d6 psychic damage and use Reaction to flee at full speed.',upc:'+1d6 per slot level above 1st'},
+  'Suggestion':{lv:2,school:'Enchantment',ct:'1 Action',range:'30 ft',comp:'V, M',dur:'Conc., 8 hours',conc:true,save:'WIS',tags:['control','roleplay'],desc:'Reasonable suggestion (1-2 sentences). WIS save DC 16 or follow it.'},
+  'Hold Person':{lv:2,school:'Enchantment',ct:'1 Action',range:'60 ft',comp:'V, S, M',dur:'Conc., 1 minute',conc:true,save:'WIS',tags:['control'],desc:'Humanoid paralyzed. WIS save DC 16 or Paralyzed. Repeat save each turn. Attacks ADV; melee hits in 5 ft are crits.',upc:'+1 creature per slot level above 2nd'},
+  'Hypnotic Pattern':{lv:3,school:'Illusion',ct:'1 Action',range:'120 ft',comp:'S, M',dur:'Conc., 1 minute',conc:true,save:'WIS',tags:['control','aoe'],desc:'30 ft cube of colors. WIS save DC 16 or Charmed (Incapacitated, speed 0). Ends on damage or if shaken.'},
+  'Counterspell':{lv:3,school:'Abjuration',ct:'1 Reaction',range:'60 ft',comp:'S',dur:'Instantaneous',conc:false,tags:['reaction'],special:'🔮 Magical Secrets · War Caster: use as Opportunity Attack',desc:'Auto-counter spell lv3 or lower. For lv4+: ATK roll DC 10 + spell level.'},
+  'Dispel Magic':{lv:3,school:'Abjuration',ct:'1 Action',range:'120 ft',comp:'V, S',dur:'Instantaneous',conc:false,tags:['utility'],special:'🔮 Magical Secrets',desc:'End any spell lv3 or lower on target. For lv4+: spellcasting ability check DC 10 + spell level.'},
+};
+
+// ─── STATE ────────────────────────────
+const DEF={
+  hp:{current:59,max:59,temp:0},
+  slots:{1:{u:0,m:4},2:{u:0,m:3},3:{u:0,m:3},4:{u:0,m:2}},
+  bi:{used:0,max:4},
+  varaCmd:false,conc:null,conds:[],exhaustion:0,
+  ds:{s:0,f:0},acts:{a:false,b:false,r:false},
+  notes:{session:'',npcs:'',missions:'',panelia:'',clan:''},
+  gold:{gp:0,sp:0,cp:0},
+  diceLog:[],customSpells:[],
+  dancingSword:{hovering:false,attacks:0,attuned:true},
+};
+
+let S={};
+function loadS(){
+  try{const raw=localStorage.getItem('folk_v4');S=raw?JSON.parse(raw):{}}catch(e){S={}}
+  S.hp={...DEF.hp,...(S.hp||{})};
+  S.slots=S.slots||{};[1,2,3,4].forEach(l=>{S.slots[l]={...DEF.slots[l],...(S.slots[l]||{})}});
+  S.bi={...DEF.bi,...(S.bi||{})};
+  S.varaCmd=S.varaCmd??false;S.conc=S.conc??null;
+  S.conds=Array.isArray(S.conds)?S.conds:[];
+  S.exhaustion=S.exhaustion??0;S.ds={...DEF.ds,...(S.ds||{})};
+  S.acts={...DEF.acts,...(S.acts||{})};
+  S.notes={...DEF.notes,...(S.notes||{})};
+  S.gold={...DEF.gold,...(S.gold||{})};
+  S.diceLog=Array.isArray(S.diceLog)?S.diceLog:[];
+  S.customSpells=Array.isArray(S.customSpells)?S.customSpells:[];
+  S.dancingSword={...DEF.dancingSword,...(S.dancingSword||{})};
+}
+function save(){try{localStorage.setItem('folk_v4',JSON.stringify(S))}catch(e){}}
+
+// ─── NAVIGATION ───────────────────────
+let curSec='dashboard',curNoteTab='session',spellFilter='all',advMode='normal';
+
+function showSection(id){
+  if(curSec==='notes')autoSaveNote();
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id)?.classList.add('active');
+  document.querySelector(`.ntab[data-s="${id}"]`)?.classList.add('active');
+  curSec=id;renderSection(id);window.scrollTo(0,0);
+}
+function renderSection(id){
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  const fn={dashboard:dashHTML,combat:combatHTML,spellbook:spellbookHTML,bard:bardHTML,inventory:inventoryHTML,vara:varaHTML,conditions:conditionsHTML,notes:notesHTML,dice:diceHTML}[id];
+  if(fn)el.innerHTML=fn();
+  updateHeaderHP();updateCondBanner();
+}
+
+// ─── TOAST ────────────────────────────
+function toast(msg,ms=2200){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),ms)}
+function openModal(id){document.getElementById(id)?.classList.add('open')}
+function closeModal(id){document.getElementById(id)?.classList.remove('open')}
+
+// ─── HP ───────────────────────────────
+function updateHeaderHP(){
+  const{current:c,max:m}=S.hp;const pct=c/m*100;
+  const el=document.getElementById('hdr-hp');if(!el)return;
+  el.textContent=c;el.className='hstat-val '+(pct>50?'ok':pct>25?'warn':'crit');
+}
+function adjustHP(n){
+  S.hp.current=Math.max(0,Math.min(S.hp.max,S.hp.current+n));
+  save();updateHeaderHP();renderSection(curSec);
+  toast(n<0?`⚔️ ${Math.abs(n)} damage taken`:`💚 +${n} HP restored`);
+}
+function applyHP(t){
+  const v=parseInt(document.getElementById('mi-hp').value)||0;if(v<=0)return;
+  if(t==='dmg'){if(S.hp.temp>0){const ab=Math.min(S.hp.temp,v);S.hp.temp-=ab;S.hp.current=Math.max(0,S.hp.current-(v-ab));}else S.hp.current=Math.max(0,S.hp.current-v);}
+  else S.hp.current=Math.min(S.hp.max,S.hp.current+v);
+  save();updateHeaderHP();closeModal('m-hp');document.getElementById('mi-hp').value='';renderSection(curSec);
+  toast(t==='dmg'?`⚔️ ${v} damage`:`💚 +${v} HP`);
+}
+function applyTempHP(){
+  const v=parseInt(document.getElementById('mi-temp').value)||0;
+  S.hp.temp=v;save();closeModal('m-temp');renderSection(curSec);toast(`🛡️ ${v} temp HP`);
+}
+
+function hpBarHTML(){
+  const{current:c,max:m,temp:t}=S.hp;const pct=Math.round(c/m*100);
+  const col=pct>50?'#4a9a60':pct>25?'#b07a10':'#c04040';
+  return`<div style="display:flex;align-items:baseline;gap:8px;justify-content:center;margin:6px 0">
+    <span class="big-num" style="color:${col}">${c}</span>
+    <span class="muted cinzel" style="font-size:20px"> / ${m}</span>
+    ${t>0?`<span style="font-size:14px;color:#70a0e0"> +${t}🛡️</span>`:''}
+  </div>
+  <div class="hp-wrap"><div class="hp-bar" style="width:${pct}%;background:${col}"></div></div>
+  <div class="tc muted ts mb8">${pct}% · Temp HP: ${t>0?t:'—'}</div>`;
+}
+
+// ─── DANCING SWORD ────────────────────
+const DS={name:'Dancing Sword',type:'Shortsword',rarity:'Very Rare',atk:5,dmg:'1d6+2',dmgType:'piercing',atkMod:'DEX +2 + Prof +3'};
+
+function dsSwordWidgetHTML(){
+  const d=S.dancingSword;
+  const hovering=d.hovering;
+  const attacks=d.attacks;
+  const remaining=4-attacks;
+  let pips='';for(let i=0;i<4;i++){const used=i<attacks;pips+=`<span class="sword-pip${used?' used':''}"></span>`;}
+  const statusLabel=hovering?`🌀 Hovering — ${remaining} attack${remaining!==1?'s':''} remaining`:'🗡️ In hand / Grounded';
+  const statusColor=hovering?'#80b0f0':'var(--txt2)';
+  const disadvWarn=hasAttackDisadv()&&!hovering?`<div class="disadv-warning">⚠️ Condition: DISADV on attack rolls</div>`:'';
+  return`<div class="card dance">
+    <div class="ctitle" style="color:#80b0f0">⚔️ Dancing Sword (Shortsword)</div>
+    <div class="ts c2 mb8">Very Rare · Requires Attunement · ATK ${fmtMod(DS.atk)} · ${DS.dmg} piercing</div>
+    <div class="sword-status${hovering?' hovering':' grounded'}">
+      <span class="sword-icon-big">${hovering?'🌀':'🗡️'}</span>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:12px;color:${statusColor};margin-bottom:4px">${statusLabel}</div>
+        <div class="sword-pip-lbl">Attacks used this launch:</div>
+        <div class="sword-atk-pips">${pips}</div>
+      </div>
+    </div>
+    ${disadvWarn}
+    <div class="btn-row mb8">
+      ${!hovering?`<button class="btn blue f1" onclick="dsLaunch()">🎵 Launch<br><span style="font-size:9px;opacity:.7">Bonus Action</span></button>`:''}
+      ${hovering&&remaining>0?`<button class="btn blue f1" onclick="dsAttack()">⚔️ Attack<br><span style="font-size:9px;opacity:.7">Bonus Action (${remaining} left)</span></button>`:''}
+      ${hovering?`<button class="btn f1" onclick="dsRecall()">↩ Recall<br><span style="font-size:9px;opacity:.7">Let it return</span></button>`:''}
+      ${!hovering?`<button class="btn f1" onclick="diceRoll(1,6,2,'Dancing Sword ATK Dmg (1d6+2)');showSection('dice')">🎲 Roll Dmg</button>`:''}
+    </div>
+    ${hovering?`<button class="btn full" style="margin-bottom:8px" onclick="dsRollAtk()">🎲 Roll Attack ${fmtMod(DS.atk)}</button>`:''}
+    <div class="muted txs">
+      ${hovering?'Sword hovers up to 30 ft away · attacks one creature within 5 ft of itself · uses your attack roll & ability mod':'Bonus Action to launch · flies up to 30 ft · attacks one creature within 5 ft · returns after 4 attacks'}
+    </div>
+  </div>`;
+}
+
+function dsLaunch(){
+  if(S.dancingSword.hovering){toast('Sword is already hovering!');return}
+  S.dancingSword.hovering=true;S.dancingSword.attacks=0;
+  save();renderSection(curSec);toast('🌀 Dancing Sword launched! (Bonus Action used)');
+}
+function dsAttack(){
+  if(!S.dancingSword.hovering){toast('Sword is not hovering');return}
+  if(S.dancingSword.attacks>=4){toast('4 attacks used — sword returning');dsRecall();return}
+  S.dancingSword.attacks++;
+  const r=rollD20(DS.atk,'Dancing Sword Attack');
+  save();renderSection(curSec);
+  if(S.dancingSword.attacks>=4){toast(`⚔️ Attack! (${DS.atk>=0?'+':''}${DS.atk}) — 4th attack! Sword returns.`);S.dancingSword.hovering=false;save();renderSection(curSec);}
+  else toast(`⚔️ Attack ${S.dancingSword.attacks}/4 — rolled ${r.total}`);
+}
+function dsRollAtk(){
+  const r=rollD20(DS.atk,'Dancing Sword Attack Roll');
+  toast(`⚔️ DS Attack: ${r.total}`);
+}
+function dsRecall(){
+  S.dancingSword.hovering=false;S.dancingSword.attacks=0;
+  save();renderSection(curSec);toast('↩ Dancing Sword returned to hand');
+}
+
+// ─── SPELL SLOTS ──────────────────────
+function slotsHTML(){
+  return[1,2,3,4].map(lv=>{
+    const sl=S.slots[lv];const avail=sl.m-sl.u;
+    let pips='';for(let i=0;i<sl.m;i++){const used=i<sl.u;pips+=`<span class="slot-pip${used?' used':''}" onclick="${used?'restoreSlot':'useSlot'}(${lv})"></span>`;}
+    return`<div class="slots-lbl">LEVEL ${lv} — ${avail} available</div><div class="slots-row">${pips}</div>`;
+  }).join('');
+}
+function useSlot(lv){if(S.slots[lv].u>=S.slots[lv].m){toast('No level '+lv+' slots remaining');return}S.slots[lv].u++;save();renderSection(curSec);toast(`Level ${lv} slot used`)}
+function restoreSlot(lv){if(S.slots[lv].u<=0)return;S.slots[lv].u--;save();renderSection(curSec)}
+
+// ─── BARDIC INSPIRATION ───────────────
+function biPipsHTML(){
+  const{used,max}=S.bi;let h='';
+  for(let i=0;i<max;i++){const on=i<(max-used);h+=`<span class="bi-pip${on?' on':''}" onclick="${on?'useBI':'restoreBI'}()"></span>`;}
+  return`<div class="bi-pips">${h}</div>`;
+}
+function useBI(){if(S.bi.used>=S.bi.max){toast('No Bardic Inspiration remaining');return}S.bi.used++;save();renderSection(curSec);diceRoll(1,8,0,'Bardic Inspiration (d8)');toast('♪ Bardic Inspiration granted')}
+function restoreBI(){if(S.bi.used<=0)return;S.bi.used--;save();renderSection(curSec)}
+
+// ─── CONCENTRATION ────────────────────
+function concHTML(){
+  if(S.conc)return`<div class="conc-wrap" onclick="openModal('m-conc')"><div class="conc-dot"></div><span class="conc-text">${S.conc}</span><button class="btn" style="padding:3px 10px;font-size:10px" onclick="breakConc();event.stopPropagation()">✕</button></div>`;
+  return`<div class="ab w" onclick="openModal('m-conc')" style="text-align:center;color:var(--txt3);font-size:14px;padding:12px">🔵 No concentration — tap to activate</div>`;
+}
+function setConc(){const v=document.getElementById('mi-conc').value.trim();if(!v)return;S.conc=v;save();closeModal('m-conc');document.getElementById('mi-conc').value='';renderSection(curSec);toast(`🔵 Concentrating: ${v}`)}
+function breakConc(){S.conc=null;save();closeModal('m-conc');renderSection(curSec);toast('Concentration broken')}
+
+// ─── VARA COMMAND ─────────────────────
+function useVaraCmd(){if(S.varaCmd){toast("Already used today");return}S.varaCmd=true;save();renderSection(curSec);toast('⚡ Vara Command used')}
+
+// ─── CONDITIONS ───────────────────────
+function toggleCond(name){
+  const i=S.conds.indexOf(name);
+  if(i>=0)S.conds.splice(i,1);else S.conds.push(name);
+  save();renderSection(curSec);updateCondBanner();
+  toast(i>=0?`Condition removed: ${name}`:`⚠️ ${name} active`);
+}
+function activeCondsHTML(small=false){
+  if(S.conds.length===0)return`<span class="muted ts">No active conditions</span>`;
+  return S.conds.map(n=>{const c=CONDITIONS_DB[n]||{icon:'❓',color:'#aaa'};
+    return`<span class="cond-chip on" style="${small?'font-size:12px;padding:3px 8px':''}" onclick="${small?`showSection('conditions')`:`toggleCond('${n}')`}">${c.icon} ${n}${!small?' <span style="opacity:.6">✕</span>':''}</span>`;
+  }).join('');
+}
+
+// ─── DEATH SAVES ──────────────────────
+function dsPipsHTML(type){
+  const count=type==='s'?S.ds.s:S.ds.f;const cls=type==='s'?'succ':'fail';
+  let h='';for(let i=0;i<3;i++)h+=`<span class="ds-pip ${cls}${i<count?' on':''}" onclick="toggleDS('${type}',${i})"></span>`;return h;
+}
+function toggleDS(t,i){
+  if(t==='s')S.ds.s=S.ds.s>i?i:i+1;else S.ds.f=S.ds.f>i?i:i+1;
+  save();renderSection(curSec);
+  if(S.ds.f>=3)toast('💀 Three failures — dying...',3000);
+  if(S.ds.s>=3)toast('✨ Three successes — stabilized!',3000);
+}
+
+// ─── ACTIONS ──────────────────────────
+function toggleAct(k){S.acts[k]=!S.acts[k];save();renderSection(curSec)}
+function actGridHTML(){
+  return`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${[{k:'a',icon:'⚔️',name:'ACTION'},{k:'b',icon:'⚡',name:'BONUS'},{k:'r',icon:'🛡️',name:'REACTION'}].map(a=>`
+    <div class="act-token${S.acts[a.k]?' used':''}" onclick="toggleAct('${a.k}')">
+      <span class="act-icon">${a.icon}</span><span class="act-name">${a.name}</span>
+      <span class="act-state">${S.acts[a.k]?'Used':'Available'}</span>
+    </div>`).join('')}</div>`;
+}
+function resetTurn(){S.acts={a:false,b:false,r:false};save();renderSection(curSec);toast('↺ New turn')}
+
+// ─── RESTS ────────────────────────────
+function shortRest(){S.bi.used=0;S.acts={a:false,b:false,r:false};save();renderSection(curSec);toast('🌙 Short Rest — Bardic Inspiration restored')}
+function longRest(){
+  S.hp.current=S.hp.max;S.hp.temp=0;[1,2,3,4].forEach(lv=>S.slots[lv].u=0);
+  S.bi.used=0;S.varaCmd=false;S.ds={s:0,f:0};S.acts={a:false,b:false,r:false};
+  S.dancingSword={hovering:false,attacks:0,attuned:true};
+  save();renderSection(curSec);updateHeaderHP();toast('☀️ Long Rest — everything restored');
+}
+function adjExhaustion(d){S.exhaustion=Math.max(0,Math.min(6,(S.exhaustion||0)+d));save();updateCondBanner();renderSection(curSec)}
+function adjGold(t,n){S.gold[t]=Math.max(0,(S.gold[t]||0)+n);save();renderSection(curSec)}
+
+// ─── DICE ────────────────────────────
+function diceRoll(count,sides,mod,label){
+  const rolls=Array.from({length:count},()=>Math.floor(Math.random()*sides)+1);
+  const total=rolls.reduce((a,b)=>a+b,0)+(mod||0);
+  const ms=mod?(mod>0?` + ${mod}`:` - ${Math.abs(mod)}`): '';
+  const r={label:label||`${count}d${sides}${mod?fmtMod(mod):''}`,total,bd:rolls.join(' + ')+ms,rolls};
+  S.diceLog.unshift(r);if(S.diceLog.length>15)S.diceLog.pop();save();
+  if(curSec==='dice')renderSection('dice');return r;
+}
+function rollD20(mod,label,adv){
+  const r1=Math.floor(Math.random()*20)+1;const ms=mod?(mod>0?` + ${mod}`:` - ${Math.abs(mod)}`): '';
+  if(adv==='adv'){const r2=Math.floor(Math.random()*20)+1;const best=Math.max(r1,r2);const total=best+(mod||0);const r={label:`${label} (Advantage)`,total,bd:`(${r1}, ${r2}) → ${best}${ms}`,rolls:[r1,r2]};S.diceLog.unshift(r);if(S.diceLog.length>15)S.diceLog.pop();save();if(curSec==='dice')renderSection('dice');return r;}
+  if(adv==='dis'){const r2=Math.floor(Math.random()*20)+1;const worst=Math.min(r1,r2);const total=worst+(mod||0);const r={label:`${label} (Disadvantage)`,total,bd:`(${r1}, ${r2}) → ${worst}${ms}`,rolls:[r1,r2]};S.diceLog.unshift(r);if(S.diceLog.length>15)S.diceLog.pop();save();if(curSec==='dice')renderSection('dice');return r;}
+  const total=r1+(mod||0);const r={label:label||`d20${mod?fmtMod(mod):''}`,total,bd:`${r1}${ms}`,rolls:[r1]};
+  S.diceLog.unshift(r);if(S.diceLog.length>15)S.diceLog.pop();save();if(curSec==='dice')renderSection('dice');return r;
+}
+function qRoll(mod,label){
+  const adv=hasAttackDisadv()&&!hasAttackAdv()?'dis':hasAttackAdv()&&!hasAttackDisadv()?'adv':advMode==='normal'?undefined:advMode;
+  rollD20(mod,label,adv);
+}
+function qRollFree(mod,label){rollD20(mod,label,advMode==='normal'?undefined:advMode)}
+
+function lastDiceHTML(){
+  const r=S.diceLog[0];if(!r)return`<div class="dice-label2">DICE ASSISTANT</div><div class="dice-total muted" style="font-size:48px">—</div><div class="dice-breakdown muted">Choose a roll below</div>`;
+  const crit=r.rolls&&r.rolls.length===1&&r.rolls[0]===20;const fumble=r.rolls&&r.rolls.length===1&&r.rolls[0]===1;
+  return`<div class="dice-label2">${r.label}</div>
+    <div class="dice-total" style="${crit?'color:var(--goldbr);text-shadow:0 0 30px rgba(240,192,96,.6)':fumble?'color:var(--danger)':''}">${r.total}</div>
+    <div class="dice-breakdown">${r.bd}</div>
+    ${crit?'<div class="gold cinzel" style="font-size:12px;margin-top:6px;letter-spacing:.12em">✦ CRITICAL HIT ✦</div>':''}
+    ${fumble?'<div class="danger-c cinzel" style="font-size:12px;margin-top:6px;letter-spacing:.12em">☠ CRITICAL FAIL ☠</div>':''}`;
+}
+function setAdvMode(m){advMode=m;renderSection('dice')}
+
+// ─── SPELL CASTING ────────────────────
+function castSpell(name,lv){
+  if(lv===0){toast(`✨ ${name} cast`);const sp=SPELLS_DB[name];if(sp?.conc){S.conc=name;save();}return;}
+  if(S.slots[lv].u>=S.slots[lv].m){toast('No slots available');return}
+  S.slots[lv].u++;const sp=SPELLS_DB[name];if(sp?.conc)S.conc=name;
+  save();renderSection(curSec);toast(`✨ ${name} (Lv${lv}) — slot used`);
+}
+function toggleSpellCard(id){document.getElementById('sc-'+id)?.classList.toggle('open')}
+function spellCardHTML(name,sp){
+  const lv=sp.lv||0;const lid=name.replace(/[^a-zA-Z0-9]/g,'_');
+  const badge=['Cantrip','Level 1','Level 2','Level 3','Level 4'][lv];
+  let castBtns='';
+  const disadv=hasAttackDisadv()&&sp.save;
+  if(lv===0)castBtns=`<button class="cast-btn" onclick="castSpell('${name}',0);event.stopPropagation()">Cast</button>`;
+  else{let any=false;for(let l=lv;l<=4;l++){if(S.slots[l]&&S.slots[l].u<S.slots[l].m){castBtns+=`<button class="cast-btn" onclick="castSpell('${name}',${l});event.stopPropagation()">Cast Lv${l}</button>`;any=true;}}if(!any)castBtns='<span class="muted ts">No slots available</span>';}
+  return`<div class="spell-card${sp.conc?' conc-card':''}${lv===0?' cantrip-card':''}" id="sc-${lid}" onclick="toggleSpellCard('${lid}')">
+    <div class="row jb" style="gap:8px;margin-bottom:4px">
+      <div><div class="spell-name">${name}</div><div style="font-size:12px;color:var(--txt3)">${sp.school||''}${sp.ct?' · '+sp.ct:''}</div></div>
+      <span class="spell-badge badge-${lv}">${badge}</span>
+    </div>
+    <div class="spell-meta">
+      <span class="stag">🕐 ${sp.ct}</span><span class="stag">📏 ${sp.range}</span><span class="stag">⏱ ${sp.dur}</span>
+      ${sp.dmg?`<span class="stag" style="color:#c08040">⚔️ ${sp.dmg}</span>`:''}
+      ${sp.save?`<span class="stag" style="color:#c0a0f0">DC${CHAR.DC} ${sp.save}</span>`:''}
+      ${sp.conc?`<span class="conc-badge">🔵 Conc.</span>`:''}
+      ${disadv?`<span class="stag" style="color:#f08080">⚠ DISADV</span>`:''}
+    </div>
+    <div class="spell-desc">
+      <p style="margin-bottom:6px">${sp.desc}</p>
+      ${sp.special?`<div class="spec-note">${sp.special}</div>`:''}
+      ${sp.upc?`<div class="up-note">↑ ${sp.upc}</div>`:''}
+      <div class="cast-actions">${castBtns}</div>
+    </div>
+  </div>`;
+}
+function addCustomSpell(){
+  const name=document.getElementById('cs-name').value.trim();if(!name)return;
+  const sp={name,lv:parseInt(document.getElementById('cs-level').value)||0,ct:document.getElementById('cs-cast').value||'1 Action',range:document.getElementById('cs-range').value||'—',dur:document.getElementById('cs-dur').value||'Instantaneous',desc:document.getElementById('cs-desc').value||'No description.',conc:false,school:'Custom',tags:[]};
+  S.customSpells.push(sp);save();closeModal('m-custom-spell');renderSection('spellbook');toast(`✨ ${name} added`);
+}
+function removeCustomSpell(name){S.customSpells=S.customSpells.filter(s=>s.name!==name);save();renderSection('spellbook');toast('Spell removed')}
+
+// ─── NOTES ───────────────────────────
+function autoSaveNote(){const ta=document.getElementById('note-ta');if(ta){S.notes[curNoteTab]=ta.value;save();}}
+function setNoteTab(t){autoSaveNote();curNoteTab=t;renderSection('notes')}
+function saveNote(){autoSaveNote();toast('📝 Note saved')}
+
+// ══════════════════════════════════════
+// SECTION HTML GENERATORS
+// ══════════════════════════════════════
+
+function dashHTML(){
+  const biAvail=S.bi.max-S.bi.used;const spd=effectiveSpeed();
+  return`
+<div class="sec-title">⚔️ Combat Dashboard</div>
+${condEffectsBoxHTML()}
+<div class="card acc glow">
+  <div class="ctitle">Hit Points</div>
+  ${hpBarHTML()}
+  <div class="adj"><button class="ab d" onclick="adjustHP(-10)">−10</button><button class="ab d" onclick="adjustHP(-5)">−5</button><button class="ab d" onclick="adjustHP(-1)">−1</button><button class="ab h" onclick="adjustHP(1)">+1</button><button class="ab h" onclick="adjustHP(5)">+5</button><button class="ab h" onclick="adjustHP(10)">+10</button></div>
+  <div class="adj mt8"><button class="ab w" onclick="openModal('m-hp')">📊 Manual</button><button class="ab w" onclick="openModal('m-temp')">🛡️ Temp HP</button></div>
+</div>
+<div class="card">
+  <div class="ctitle">Key Stats</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
+    <div class="stat-box"><div class="stat-name">AC</div><div class="stat-score" style="font-size:18px">18</div></div>
+    <div class="stat-box"><div class="stat-name">DC</div><div class="stat-score" style="font-size:18px">16</div></div>
+    <div class="stat-box"><div class="stat-name">ATK</div><div class="stat-score" style="font-size:18px">+8</div></div>
+    <div class="stat-box"><div class="stat-name">INIT</div><div class="stat-score" style="font-size:18px">+2</div></div>
+    <div class="stat-box" style="${spd<CHAR.baseSpeed?'border-color:'+(spd===0?'var(--danger)':'var(--warn)'):''}">
+      <div class="stat-name">SPD</div>
+      <div class="stat-score" style="font-size:${spd===0?'14':'18'}px;color:${spd===0?'var(--danger)':spd<CHAR.baseSpeed?'var(--warn)':''}">${spd}ft${spd<CHAR.baseSpeed&&spd>0?'⚠':''}${spd===0?'🚫':''}</div>
+    </div>
+  </div>
+</div>
+<div class="card acc">
+  <div class="ctitle">Bardic Inspiration · d8</div>
+  ${biPipsHTML()}
+  <div class="row fw" style="gap:6px"><button class="btn pri" onclick="useBI()">♪ Grant (${biAvail}/${S.bi.max})</button><button class="btn" onclick="diceRoll(1,8,0,'Bardic Inspiration d8')">🎲 Roll d8</button></div>
+  <div class="muted txs mt8">Restored on Short Rest</div>
+</div>
+<div class="card"><div class="ctitle">Concentration</div>${concHTML()}</div>
+<div class="card"><div class="ctitle">Active Conditions</div><div>${activeCondsHTML(true)}</div></div>
+${dsSwordWidgetHTML()}
+<div class="card" style="border-color:var(--copper);background:linear-gradient(135deg,var(--card),#1a1208)">
+  <div class="ctitle" style="color:var(--copper)">Vara del Juglar</div>
+  <div class="muted ts mb8">+1 DC · +1 ATK · Eloquence · Bite</div>
+  <button class="btn${S.varaCmd?'':' pri'} full" onclick="useVaraCmd()" ${S.varaCmd?'disabled':''}>${S.varaCmd?'✓ Command used today':'⚡ Use Free Command'}</button>
+  <div class="tc txs mt8 ${S.varaCmd?'muted':'success-c'}">${S.varaCmd?'Restored on Long Rest':'Available'}</div>
+</div>
+<div class="card"><div class="ctitle">Rests</div><div class="btn-row"><button class="btn f1" onclick="shortRest()">🌙 Short Rest</button><button class="btn pri f1" onclick="longRest()">☀️ Long Rest</button></div></div>`;
+}
+
+function combatHTML(){
+  const spd=effectiveSpeed();
+  const{str:autoStr,dex:autoDex}=autoFailSaves();
+  const disadv=hasAttackDisadv();const advAtk=hasAttackAdv();
+  const atkNote=disadv&&!advAtk?'<div class="disadv-warning">⚠️ Condition effect: DISADVANTAGE on attack rolls</div>':advAtk&&!disadv?'<div class="adv-note">✦ Condition effect: ADVANTAGE on attack rolls</div>':'';
+  const vsYouNote=attacksVsYouAdv()?'<div class="disadv-warning" style="background:rgba(64,192,80,.1);border-color:rgba(64,192,80,.4);color:#70d090">⚠️ Enemies have ADVANTAGE on attacks against you</div>':'';
+  const incapNote=isIncapacitated()?'<div class="disadv-warning">⛔ INCAPACITATED — cannot take actions or reactions</div>':'';
+  return`
+<div class="sec-title">⚔️ Combat Management</div>
+${condEffectsBoxHTML()}
+<div class="card acc">
+  <div class="ctitle">Hit Points</div>
+  ${hpBarHTML()}
+  <div class="adj"><button class="ab d" onclick="adjustHP(-20)">−20</button><button class="ab d" onclick="adjustHP(-10)">−10</button><button class="ab d" onclick="adjustHP(-5)">−5</button><button class="ab d" onclick="adjustHP(-1)">−1</button></div>
+  <div class="adj"><button class="ab h" onclick="adjustHP(1)">+1</button><button class="ab h" onclick="adjustHP(5)">+5</button><button class="ab h" onclick="adjustHP(10)">+10</button><button class="ab h" onclick="adjustHP(${S.hp.max-S.hp.current})">Max</button></div>
+  <div class="adj mt8"><button class="ab w" onclick="openModal('m-hp')">📊 Manual</button><button class="ab w" onclick="openModal('m-temp')">🛡️ Temp HP</button></div>
+</div>
+<div class="card">
+  <div class="ctitle">Action Economy</div>
+  ${incapNote}${actGridHTML()}
+  <button class="btn full mt8" onclick="resetTurn()">↺ New Turn</button>
+</div>
+${dsSwordWidgetHTML()}
+<div class="card">
+  <div class="ctitle">Attacks & Rolls</div>
+  ${atkNote}${vsYouNote}
+  <div class="ts c2">
+    <div class="row jb" style="padding:5px 0;border-bottom:1px solid var(--border)"><span>⚡ Spell Attack</span><div class="row" style="gap:6px"><strong>1d20+8</strong><button class="btn" style="padding:3px 10px;font-size:10px" onclick="qRoll(8,'Spell Attack')">Roll</button></div></div>
+    <div class="row jb" style="padding:5px 0;border-bottom:1px solid var(--border)"><span>🗡️ Dancing Sword</span><div class="row" style="gap:6px"><strong>1d20+5</strong><button class="btn" style="padding:3px 10px;font-size:10px" onclick="qRoll(5,'Dancing Sword ATK')">Roll</button></div></div>
+    <div class="row jb" style="padding:5px 0"><span>⚡ Initiative</span><div class="row" style="gap:6px"><strong>1d20+2</strong><button class="btn" style="padding:3px 10px;font-size:10px" onclick="qRoll(2,'Initiative')">Roll</button></div></div>
+  </div>
+</div>
+<div class="card"><div class="ctitle">Concentration</div>${concHTML()}
+  <div class="muted txs mt8">War Caster: ADV on CON saves · DC = 10 or ½ damage (higher)</div>
+  <div class="btn-row mt8"><button class="btn f1" onclick="rollD20(2,'CON Save (Concentration)')">Normal</button><button class="btn mag f1" onclick="rollD20(2,'CON Save (Concentration)','adv')">★ With Advantage</button></div>
+</div>
+<div class="card">
+  <div class="ctitle">Turn Reference</div>
+  <div class="ts c2">
+    <div class="row jb" style="padding:4px 0;border-bottom:1px solid var(--border)"><span>🏃 Speed</span><strong style="color:${spd===0?'var(--danger)':spd<CHAR.baseSpeed?'var(--warn)':''}">${spd} ft${spd<CHAR.baseSpeed?' ⚠':''}</strong></div>
+    <div class="row jb" style="padding:4px 0;border-bottom:1px solid var(--border)"><span>🛡️ AC / Spell DC</span><strong>18 / 16</strong></div>
+    ${autoStr?'<div class="row jb" style="padding:4px 0;border-bottom:1px solid var(--border)"><span>STR Saves</span><strong style="color:var(--danger)">AUTO-FAIL</strong></div>':''}
+    ${autoDex?'<div class="row jb" style="padding:4px 0;border-bottom:1px solid var(--border)"><span>DEX Saves</span><strong style="color:var(--danger)">AUTO-FAIL</strong></div>':''}
+    <div class="row jb" style="padding:4px 0"><span>Extra Attack</span><strong>2 attacks per Attack action</strong></div>
+  </div>
+</div>
+<div class="card danger">
+  <div class="ctitle" style="color:var(--danger)">Death Saving Throws</div>
+  <div class="row" style="padding:7px 0"><span class="cinzel txs success-c" style="min-width:80px">✓ SUCCESSES</span><div style="display:flex;gap:8px">${dsPipsHTML('s')}</div></div>
+  <div class="row" style="padding:7px 0"><span class="cinzel txs danger-c" style="min-width:80px">✕ FAILURES</span><div style="display:flex;gap:8px">${dsPipsHTML('f')}</div></div>
+  <div class="btn-row mt8"><button class="btn suc f1" onclick="rollD20(0,'Death Saving Throw')">🎲 Roll d20</button><button class="btn f1" onclick="S.ds={s:0,f:0};save();renderSection('combat')">Reset</button></div>
+</div>
+<div class="card"><div class="ctitle">Rests</div><div class="btn-row"><button class="btn f1" onclick="shortRest()">🌙 Short Rest</button><button class="btn pri f1" onclick="longRest()">☀️ Long Rest</button></div></div>`;
+}
+
+function spellbookHTML(){
+  const filters=[['all','All'],['cantrip','Cantrips'],['1','Level 1'],['2','Level 2'],['3','Level 3'],['4','Level 4'],['conc','Concentration'],['control','Control'],['heal','Healing']];
+  function matchF(sp){if(spellFilter==='all')return true;if(spellFilter==='cantrip')return sp.lv===0;if(['1','2','3','4'].includes(spellFilter))return sp.lv===parseInt(spellFilter);if(spellFilter==='conc')return sp.conc;if(spellFilter==='control')return sp.tags?.includes('control');if(spellFilter==='heal')return sp.tags?.includes('healing');return true;}
+  const customHTML=S.customSpells.filter(sp=>matchF(sp)).map(sp=>{
+    const lid=sp.name.replace(/[^a-zA-Z0-9]/g,'_');const badge=['Cantrip','Level 1','Level 2','Level 3','Level 4'][sp.lv]||'Cantrip';
+    return`<div class="spell-card" id="sc-${lid}" onclick="toggleSpellCard('${lid}')"><div class="row jb" style="gap:8px;margin-bottom:4px"><div><div class="spell-name">${sp.name}</div><div style="font-size:12px;color:var(--txt3)">${sp.school} · ${sp.ct}</div></div><div style="display:flex;gap:4px;align-items:center"><span class="spell-badge badge-${sp.lv}">${badge}</span><button style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px" onclick="removeCustomSpell('${sp.name}');event.stopPropagation()">✕</button></div></div><div class="spell-meta"><span class="stag">🕐 ${sp.ct}</span><span class="stag">📏 ${sp.range}</span><span class="stag">⏱ ${sp.dur}</span></div><div class="spell-desc"><p>${sp.desc}</p><div class="cast-actions">${sp.lv===0?`<button class="cast-btn" onclick="castSpell('${sp.name}',0);event.stopPropagation()">Cast</button>`:`<button class="cast-btn" onclick="castSpell('${sp.name}',${sp.lv});event.stopPropagation()">Cast Lv${sp.lv}</button>`}</div></div></div>`;
+  }).join('');
+  return`
+<div class="sec-title">📖 Folk's Spellbook</div>
+<div class="card acc"><div class="ctitle">Spell Slots</div>${slotsHTML()}<div class="muted txs">Tap ○ to use · Tap ● to restore</div></div>
+<div class="card ts c2"><div class="row jb fw" style="gap:8px"><span>⚡ Spell Attack: <strong class="txt">+${CHAR.atkBonus}</strong></span><span>🎯 Spell DC: <strong class="txt">${CHAR.DC}</strong></span><span>🪄 Focus: <strong class="txt">Vara del Juglar</strong></span></div>${hasAttackDisadv()?'<div class="disadv-warning" style="margin-top:8px">⚠️ Current condition: DISADVANTAGE on spell attack rolls</div>':''}</div>
+<div class="fbar">${filters.map(([f,l])=>`<span class="fchip${spellFilter===f?' on':''}" onclick="spellFilter='${f}';renderSection('spellbook')">${l}</span>`).join('')}</div>
+${Object.entries(SPELLS_DB).filter(([,sp])=>matchF(sp)).map(([name,sp])=>spellCardHTML(name,sp)).join('')}
+${customHTML}
+<div class="card" style="border-style:dashed"><div class="ctitle">Homebrew</div><button class="btn full" onclick="openModal('m-custom-spell')">+ Add Custom Spell</button></div>`;
+}
+
+function bardHTML(){
+  return`
+<div class="sec-title">🎵 Bard Features</div>
+${condEffectsBoxHTML()}
+<div class="card acc">
+  <div class="ctitle">Bardic Inspiration · d8 · ${S.bi.max-S.bi.used}/${S.bi.max} available</div>
+  <div class="row" style="gap:12px;flex-wrap:wrap;align-items:flex-start">
+    <div style="text-align:center"><div class="cinzel" style="font-size:40px;font-weight:700;color:var(--copper)">d8</div><div class="muted txs">die</div></div>
+    <div style="flex:1">${biPipsHTML()}<div class="btn-row mt8"><button class="btn pri f1" onclick="useBI()">♪ Grant</button><button class="btn f1" onclick="diceRoll(1,8,0,'Bardic Inspiration d8')">🎲 Roll d8</button></div></div>
+  </div>
+</div>
+<div class="card"><div class="ctitle">Ability Scores</div><div class="stat-grid">${Object.entries(CHAR.scores).map(([ab,sc])=>`<div class="stat-box"><div class="stat-name">${ab}</div><div class="stat-score">${sc}</div><div class="stat-mod">${fmtMod(abilMod(sc))}</div></div>`).join('')}</div></div>
+<div class="card"><div class="ctitle">Saving Throws</div>
+  ${Object.entries(CHAR.savingThrows).map(([ab,p])=>{
+    const v=saveVal(ab);const{str,dex}=autoFailSaves();
+    const fail=(ab==='STR'&&str)||(ab==='DEX'&&dex);
+    return`<div class="skill-row"><div class="pip${p?' prof':''}"></div><span class="sk-name">${ab} Save</span><span class="sk-ab">${p?'★':''}</span><span class="sk-bon" style="${fail?'color:var(--danger)':''}">${fail?'AUTO-FAIL':fmtMod(v)}</span><button class="btn" style="padding:3px 9px;font-size:10px" onclick="qRollFree(${v},'${ab} Save')">Roll</button></div>`;
+  }).join('')}
+</div>
+<div class="card"><div class="ctitle">Skills</div>
+  ${Object.entries(CHAR.skills).map(([name,sk])=>{
+    const v=skillVal(name);const disadvCheck=S.conds.some(c=>['Poisoned','Frightened','Exhausted'].includes(c)&&S.exhaustion>=1);
+    return`<div class="skill-row"><div class="pip${sk.e?' expert':sk.p?' prof':''}"></div><span class="sk-name">${name}${sk.e?' ★★':sk.p?' ★':''}</span><span class="sk-ab">${sk.ab}</span><span class="sk-bon">${fmtMod(v)}</span></div>`;
+  }).join('')}
+  <div class="muted txs mt8">★★ Expertise · ★ Proficiency · unmarked = +1 (JoAT)</div>
+</div>
+<div class="card"><div class="ctitle">Class Features (Level 8)</div>${BARD_FEATS.map(f=>`<div class="feat-card"><div class="feat-name">${f.name} <span class="muted" style="font-weight:400">(Lv${f.lv})</span></div><div class="feat-desc">${f.desc}</div></div>`).join('')}</div>
+<div class="card"><div class="ctitle">Exhaustion Level</div>
+  <div class="row" style="gap:12px;align-items:center">
+    <button class="ab d" onclick="adjExhaustion(-1)" style="max-width:50px">−</button>
+    <div style="flex:1;text-align:center"><div class="cinzel" style="font-size:34px;font-weight:700;color:${S.exhaustion>0?'var(--danger)':'var(--success)'}">${S.exhaustion}</div><div class="muted ts">${EXHAUST_DESC[S.exhaustion]}</div></div>
+    <button class="ab" onclick="adjExhaustion(1)" style="max-width:50px;border-color:var(--warn);color:var(--warn)">+</button>
+  </div>
+</div>`;
+}
+
+function inventoryHTML(){
+  const{gp,sp,cp}=S.gold;
+  return`
+<div class="sec-title">🎒 Inventory</div>
+<div class="card gold-border"><div class="ctitle">Currency</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    ${[['gp','💰 Gold',gp],['sp','🪙 Silver',sp],['cp','🟤 Copper',cp]].map(([k,l,v])=>`<div class="gold-box"><span class="gold-name2">${l}</span><span class="gold-val">${v}</span><div style="display:flex;gap:4px;margin-top:6px;justify-content:center"><button class="ab d" onclick="adjGold('${k}',-1)" style="padding:4px;min-width:28px;font-size:12px">−</button><button class="ab h" onclick="adjGold('${k}',1)" style="padding:4px;min-width:28px;font-size:12px">+</button></div></div>`).join('')}
+  </div>
+</div>
+<div class="card"><div class="ctitle">Worn Equipment</div>
+  ${CHAR.equipment.map(e=>`<div class="item-row"><span class="item-icon">${e.icon}</span><div style="flex:1"><div class="item-name">${e.name}${e.magic?' ✨':''}</div><div class="item-desc2">${e.desc}</div></div></div>`).join('')}
+</div>
+<div class="card dance">
+  <div class="ctitle" style="color:#80b0f0">⚔️ Dancing Sword — Very Rare ✨</div>
+  <div class="ts c2 mb8">Requires Attunement · Shortsword · +5 ATK · 1d6+2 piercing (Finesse)</div>
+  <div style="font-size:13px;color:var(--txt2);margin-bottom:12px;line-height:1.6">
+    <strong class="cinzel" style="font-size:10px;color:#80b0f0;letter-spacing:.1em">HOW TO USE:</strong><br>
+    1. <strong>Bonus Action:</strong> Toss — sword hovers, flies up to 30 ft, attacks one creature within 5 ft.<br>
+    2. <strong>Bonus Action (each turn):</strong> Fly up to 30 ft, attack one creature within 5 ft.<br>
+    3. After <strong>4 attacks</strong> it returns to hand automatically.<br>
+    4. Ceases hovering if you move >30 ft away or grasp it.
+  </div>
+  <div class="muted txs mb8">While hovering: your hands are FREE — use a 2-handed spell, cast freely, take another weapon.</div>
+  ${dsSwordWidgetHTML()}
+  <div class="btn-row mt8"><button class="btn f1" onclick="qRoll(5,'Dancing Sword Attack')">🎲 Roll ATK (+5)</button><button class="btn f1" onclick="diceRoll(1,6,2,'Dancing Sword Damage (1d6+2)')">🎲 Roll Dmg (1d6+2)</button></div>
+</div>
+<div class="card"><div class="ctitle">Weapons</div>
+  ${CHAR.weapons.map(w=>`<div class="item-row"><span class="item-icon">⚔️</span><div style="flex:1"><div class="item-name">${w.name}</div><div class="item-desc2">ATK ${fmtMod(w.atk)} · ${w.dmg}</div><div class="item-desc2 ital">${w.notes}</div></div><button class="btn" style="padding:5px 10px;font-size:10px" onclick="qRoll(${w.atk},'ATK: ${w.name}')">🎲 Atk</button></div>`).join('')}
+</div>
+<div class="card"><div class="ctitle">Proficiencies & Passive Values</div>
+  <div class="ts c2">
+    ${[['Armor','Light, Medium, Shields'],['Weapons','Simple, Martial'],['Tools',"Harmonica, Thieves' Tools"],['Passive Perception',10+skillVal('Perception')],['Passive Insight',10+skillVal('Insight')],['Passive Investigation',10+skillVal('Investigation')]].map(([l,v])=>`<div class="row jb" style="padding:4px 0;border-bottom:1px solid var(--border)"><span>${l}</span><strong>${v}</strong></div>`).join('')}
+  </div>
+</div>`;
+}
+
+function varaHTML(){
+  return`
+<div class="sec-title">🪄 Vara del Juglar</div>
+<div class="vara-hero">
+  <div class="vara-icon" style="position:relative;z-index:1">🎪</div>
+  <div class="vara-name" style="position:relative;z-index:1">Vara del Juglar</div>
+  <div class="vara-sub" style="position:relative;z-index:1">Magic Staff · Rare · Requires Attunement (Bard)</div>
+  <div class="muted ts" style="margin-top:12px;font-style:italic;line-height:1.6;position:relative;z-index:1">"Ancient carved wooden staff decorated with colorful clan cloth strips. Gifted to Folk by a northern clan elder who recognized his bardic nature."</div>
+</div>
+<div class="card" style="border-color:var(--copper);background:linear-gradient(135deg,var(--card),#1a1208)">
+  <div class="ctitle" style="color:var(--copper)">⚡ Authority — Free Command</div>
+  <div class="c2 ts mb8">Once per Long Rest, cast <em>Command</em> without a spell slot. If delivered as a <strong class="gold">rhyming verse</strong>, affects one additional creature.</div>
+  <div class="tc ${S.varaCmd?'muted':'success-c'} ts mb8">${S.varaCmd?'✓ Used — restores on Long Rest':'✦ Available'}</div>
+  <button class="btn${S.varaCmd?'':' pri'} full" onclick="useVaraCmd()" ${S.varaCmd?'disabled':''}>${S.varaCmd?'Already Used Today':'⚡ Use Free Command'}</button>
+</div>
+<div class="card"><div class="ctitle">Staff Effects</div>
+  <div class="vara-eff"><div class="vara-eff-name">🔮 ARCANE FOCUS (+1 DC & ATK)</div><div class="vara-eff-desc">Included in Folk's values: DC 16, ATK +8.</div></div>
+  <div class="vara-eff"><div class="vara-eff-name">🎭 ELOQUENCE — 1d4 to CHA checks while rhyming</div><div class="vara-eff-desc">Add 1d4 to Persuasion, Deception, Performance, Intimidation checks when speaking in rhyme.</div><div class="btn-row mt8"><button class="btn" style="font-size:10px;padding:5px 12px" onclick="diceRoll(1,4,${skillVal('Persuasion')},'Eloquence: Persuasion + 1d4');showSection('dice')">🎲 Persuasion+d4</button><button class="btn" style="font-size:10px;padding:5px 12px" onclick="diceRoll(1,4,${skillVal('Deception')},'Eloquence: Deception + 1d4');showSection('dice')">🎲 Deception+d4</button></div></div>
+  <div class="vara-eff"><div class="vara-eff-name">⚔️ BITE — 1d6 extra damage (verbal rhyme)</div><div class="vara-eff-desc">Once per turn, if a damaging spell uses verbal rhyme as component, add 1d6 extra damage.</div><button class="btn mt8" style="font-size:10px;padding:5px 12px" onclick="diceRoll(1,6,0,'Bite — Extra Damage');showSection('dice')">🎲 Roll 1d6 Bite</button></div>
+  <div class="vara-eff"><div class="vara-eff-name">👑 AUTHORITY — Free Command</div><div class="vara-eff-desc">Free Command 1×/long rest. Command as verse: +1 creature.</div></div>
+</div>
+<div class="card magic"><div class="ctitle" style="color:#b090f0">Lore</div><div class="c2 ts" style="line-height:1.7;font-style:italic">Ten years of slavery in Panelia's northern ruins, with only a harmonica. Escaped using bardic powers. Found shelter with a northern clan whose elder recognized his nature and gifted him this ancient staff — decorated with the clan's colors. Proof Folk is no longer alone.</div></div>`;
+}
+
+function conditionsHTML(){
+  const allConds=Object.entries(CONDITIONS_DB);
+  const spd=effectiveSpeed();
+  const{str:autoStr,dex:autoDex}=autoFailSaves();
+  return`
+<div class="sec-title">💀 Status & Conditions</div>
+${condEffectsBoxHTML()}
+<div class="card${S.conds.length>0?' danger':''}">
+  <div class="ctitle">Active Conditions</div>
+  ${S.conds.length===0?'<div class="muted ts tc" style="padding:12px 0">✓ No active conditions</div>':
+    S.conds.map(n=>{const c=CONDITIONS_DB[n]||{icon:'❓',color:'#aaa',desc:''};return`<div class="feat-card" style="border-left-color:${c.color};margin-bottom:8px"><div class="row jb"><div class="feat-name" style="color:${c.color}">${c.icon} ${n}</div><button class="btn dan" style="padding:3px 10px;font-size:10px" onclick="toggleCond('${n}')">✕ Remove</button></div><div class="feat-desc">${c.desc}</div></div>`;}).join('')}
+</div>
+<div class="card" style="${spd<CHAR.baseSpeed?'border-color:'+(spd===0?'var(--danger)':'var(--warn)'):''}">
+  <div class="ctitle">Effective Speed</div>
+  <div style="text-align:center;padding:10px 0">
+    <div class="cinzel" style="font-size:38px;font-weight:700;color:${spd===0?'var(--danger)':spd<CHAR.baseSpeed?'var(--warn)':'var(--success)'}">${spd} ft</div>
+    <div class="muted ts">${spd===0?'⛔ Cannot move':spd<CHAR.baseSpeed?`⚠ Reduced from ${CHAR.baseSpeed} ft`:`✓ Full speed`}</div>
+  </div>
+</div>
+${autoStr||autoDex?`<div class="card danger"><div class="ctitle" style="color:var(--danger)">Automatic Save Failures</div>${autoStr?'<div class="feat-card" style="border-left-color:var(--danger)"><div class="feat-name" style="color:var(--danger)">STR Saving Throws — AUTO-FAIL</div></div>':''}${autoDex?'<div class="feat-card" style="border-left-color:var(--danger)"><div class="feat-name" style="color:var(--danger)">DEX Saving Throws — AUTO-FAIL</div></div>':''}</div>`:''}
+<div class="card"><div class="ctitle">Exhaustion Level · ${S.exhaustion}/6</div>
+  <div class="row" style="gap:12px;align-items:center">
+    <button class="ab d" onclick="adjExhaustion(-1)" style="max-width:50px">−</button>
+    <div style="flex:1;text-align:center"><div class="cinzel" style="font-size:32px;font-weight:700;color:${S.exhaustion>0?'var(--danger)':'var(--success)'}">${S.exhaustion}</div><div class="muted ts">${EXHAUST_DESC[S.exhaustion]}</div></div>
+    <button class="ab" onclick="adjExhaustion(1)" style="max-width:50px;border-color:var(--warn);color:var(--warn)">+</button>
+  </div>
+</div>
+<div class="card"><div class="ctitle">Add / Remove Condition</div>
+  <div style="display:flex;flex-wrap:wrap">${allConds.map(([name,c])=>{const on=S.conds.includes(name);return`<span class="cond-chip ${on?'on':'off'}" onclick="toggleCond('${name}')">${c.icon} ${name}${on?' ✕':''}</span>`;}).join('')}</div>
+</div>
+<div class="card"><div class="ctitle">Conditions Reference</div>
+  ${allConds.map(([name,c])=>`<div class="feat-card" style="border-left-color:${c.color}"><div class="feat-name" style="color:${c.color}">${c.icon} ${name}</div><div class="feat-desc">${c.desc}</div>${c.effects.length>0?`<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${c.effects.map(e=>`<span class="cond-fx-badge ${e.type==='disadv'?'disadv':e.type==='adv'?'adv':e.type==='zero'?'zero':'auto'}">${e.text}</span>`).join('')}</div>`:''}</div>`).join('')}
+</div>`;
+}
+
+function notesHTML(){
+  const tabs=[['session','📓 Session'],['npcs','🧙 NPCs'],['missions','⚔️ Missions'],['panelia','⛓️ Panelia'],['clan','🏕️ Clan']];
+  return`
+<div class="sec-title">📝 Campaign Notes</div>
+<div class="note-tabs">${tabs.map(([k,l])=>`<span class="note-tab${curNoteTab===k?' on':''}" onclick="setNoteTab('${k}')">${l}</span>`).join('')}</div>
+<div class="card"><textarea id="note-ta" style="min-height:280px;font-size:15px;line-height:1.7" placeholder="Write your notes here...">${S.notes[curNoteTab]||''}</textarea><button class="btn pri full mt8" onclick="saveNote()">💾 Save Note</button></div>
+<div class="card magic"><div class="ctitle" style="color:#b090f0">Folk's Background</div>
+  <div class="c2 ts" style="line-height:1.7"><strong class="copper">Origin:</strong> Dandia — itinerant musician.<br><strong class="copper">Arrest:</strong> Unjustly jailed for a ruby theft at a Gremmory event. No trial.<br><strong class="copper">Slavery:</strong> Shipped to Panelia. Ten years in the northern ruins.<br><strong class="copper">Awakening:</strong> Harmonica hypnotized guards. Escaped with verbal Command.<br><strong class="copper">Clan:</strong> Elder recognized bardic nature → shelter + Vara del Juglar.<br><strong class="copper">Character:</strong> Silent · Melancholic · Protective · Hardened · Mentally resilient.</div>
+</div>`;
+}
+
+function diceHTML(){
+  const disadv=hasAttackDisadv();const advAtk=hasAttackAdv();
+  const atk20badge=disadv&&!advAtk?`<span class="rb-badge dis">DISADV</span>`:advAtk&&!disadv?`<span class="rb-badge adv">ADV</span>`:'';
+  const advBtns=[['normal','Normal',''],['adv','Advantage','suc'],['dis','Disadvantage','dan']];
+  return`
+<div class="sec-title">🎲 Dice Assistant</div>
+<div class="dice-result">${lastDiceHTML()}</div>
+${(disadv||advAtk)?`<div class="${disadv&&!advAtk?'disadv-warning':'adv-note'}">${disadv&&!advAtk?'⚠️ Active condition: DISADVANTAGE auto-applied to attack rolls':'✦ Active condition: ADVANTAGE auto-applied to attack rolls'}<br><span style="opacity:.7;font-size:10px">Override manually with the mode buttons below</span></div>`:''}
+<div class="card" style="padding:10px"><div class="ctitle">d20 Mode (Override)</div>
+  <div class="btn-row">${advBtns.map(([m,l,cl])=>`<button class="btn ${cl} f1${advMode===m?' gld':''}" onclick="setAdvMode('${m}')">${l}</button>`).join('')}</div>
+</div>
+<div class="card"><div class="ctitle">Attacks & Spells</div>
+  <div class="roll-grid">
+    <div class="roll-btn" onclick="qRoll(${CHAR.atkBonus},'Spell Attack')">${atk20badge}<span class="rb-name">⚡ Spell Attack</span><span class="rb-dice">1d20 +${CHAR.atkBonus}</span></div>
+    <div class="roll-btn" onclick="qRoll(5,'Dancing Sword ATK')">${atk20badge}<span class="rb-name">🌀 Dancing Sword</span><span class="rb-dice">1d20 +5 · 1d6+2 piercing</span></div>
+    <div class="roll-btn" onclick="diceRoll(2,4,0,'Vicious Mockery (2d4)')"><span class="rb-name">😈 Vicious Mockery</span><span class="rb-dice">2d4 psychic · DC${CHAR.DC} WIS</span></div>
+    <div class="roll-btn" onclick="diceRoll(3,6,0,'Dissonant Whispers (3d6)')"><span class="rb-name">💨 Dissonant Whispers</span><span class="rb-dice">3d6 psychic · DC${CHAR.DC} WIS</span></div>
+    <div class="roll-btn" onclick="diceRoll(1,4,4,'Healing Word (1d4+4)')"><span class="rb-name">💚 Healing Word</span><span class="rb-dice">1d4+4 healing</span></div>
+    <div class="roll-btn" onclick="diceRoll(1,6,2,'Dancing Sword Damage (1d6+2)')"><span class="rb-name">⚔️ DS Damage</span><span class="rb-dice">1d6+2 piercing</span></div>
+    <div class="roll-btn" onclick="diceRoll(1,8,0,'Bardic Inspiration (d8)')"><span class="rb-name">♪ Bardic Inspiration</span><span class="rb-dice">1d8</span></div>
+    <div class="roll-btn" onclick="diceRoll(1,6,0,'Bite — Vara Extra Dmg')"><span class="rb-name">⚡ Bite (Vara)</span><span class="rb-dice">1d6 extra (rhyme)</span></div>
+    <div class="roll-btn" onclick="diceRoll(1,4,0,'Eloquence (Vara)')"><span class="rb-name">🎭 Eloquence (Vara)</span><span class="rb-dice">1d4 CHA check</span></div>
+    <div class="roll-btn" onclick="diceRoll(1,8,2,'Hit Die (1d8+2)')"><span class="rb-name">💊 Hit Die</span><span class="rb-dice">1d8+2 (CON)</span></div>
+  </div>
+</div>
+<div class="card"><div class="ctitle">Saving Throws</div>
+  <div class="roll-grid">${Object.entries(CHAR.savingThrows).map(([ab,p])=>{const v=saveVal(ab);const{str,dex}=autoFailSaves();const fail=(ab==='STR'&&str)||(ab==='DEX'&&dex);return`<div class="roll-btn" onclick="qRollFree(${v},'${ab} Save')">${fail?'<span class="rb-badge dis">AUTO-FAIL</span>':''}<span class="rb-name">${p?'★ ':''} ${ab} Save</span><span class="rb-dice">1d20 ${fmtMod(v)}${p?' (prof.)':''}</span></div>`}).join('')}</div>
+</div>
+<div class="card"><div class="ctitle">Ability Checks</div>
+  <div class="roll-grid">${['Deception','Persuasion','Performance','Perception','Stealth','Insight','Athletics','Arcana','Sleight of Hand','Nature'].map(sk=>`<div class="roll-btn" onclick="qRollFree(${skillVal(sk)},'${sk} Check')"><span class="rb-name">${sk}</span><span class="rb-dice">1d20 ${fmtMod(skillVal(sk))}</span></div>`).join('')}</div>
+</div>
+<div class="card"><div class="ctitle">Basic Dice</div>
+  <div class="roll-grid">${[4,6,8,10,12,20].map(d=>`<div class="roll-btn" onclick="diceRoll(1,${d},0,'d${d}')"><span class="rb-name">d${d}</span><span class="rb-dice">1d${d}</span></div>`).join('')}
+    <div class="roll-btn" onclick="qRoll(${CHAR.ini},'Initiative')">${atk20badge}<span class="rb-name">⚡ Initiative</span><span class="rb-dice">1d20 +${CHAR.ini}</span></div>
+    <div class="roll-btn" onclick="diceRoll(1,100,0,'d100 Percentile')"><span class="rb-name">💯 d100</span><span class="rb-dice">Percentile roll</span></div>
+    <div class="roll-btn" onclick="diceRoll(4,6,0,'4d6 — Stat roll')"><span class="rb-name">📊 4d6</span><span class="rb-dice">Generate stat</span></div>
+    <div class="roll-btn" onclick="diceRoll(2,20,0,'2d20')"><span class="rb-name">🎲🎲 2d20</span><span class="rb-dice">Manual adv/dis</span></div>
+  </div>
+</div>
+<div class="card"><div class="ctitle">Roll History</div>
+  ${S.diceLog.length===0?'<div class="muted ts tc" style="padding:8px">No rolls yet</div>':S.diceLog.slice(0,12).map(r=>`<div class="row jb" style="padding:5px 0;border-bottom:1px solid var(--border);font-size:13px"><span class="c2">${r.label}</span><div class="row" style="gap:8px"><span class="muted txs">${r.bd}</span><strong class="cinzel gold">${r.total}</strong></div></div>`).join('')}
+</div>`;
+}
+
+// ─── INIT ─────────────────────────────
+function init(){
+  loadS();
+  renderSection('dashboard');
+  updateHeaderHP();
+  updateCondBanner();
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
