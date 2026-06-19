@@ -218,6 +218,42 @@ select option{background:var(--card2)}
 .item-row:last-child{border-bottom:none}
 .item-icon{font-size:20px;flex-shrink:0}.item-name{font-size:15px;color:var(--txt)}.item-desc2{font-size:13px;color:var(--txt3)}
 
+.feat-details{
+    margin-top:8px;
+}
+
+.feat-details summary{
+    cursor:pointer;
+    color:var(--accent);
+    font-size:13px;
+    font-weight:600;
+    user-select:none;
+    list-style:none;
+}
+
+.feat-details summary::-webkit-details-marker{
+    display:none;
+}
+
+.feat-details summary::after{
+    content:" ▼";
+    font-size:11px;
+}
+
+.feat-details[open] summary::after{
+    content:" ▲";
+}
+
+.feat-long-desc{
+    margin-top:8px;
+    padding:10px;
+    border-radius:10px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    line-height:1.5;
+    color:var(--text-secondary);
+}
+
 /* ─── DICE ───────────────────────────── */
 .dice-result{background:var(--card2);border:1px solid var(--border2);border-radius:var(--rmd);padding:16px;text-align:center;margin-bottom:12px;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .dice-total{font-family:'Cinzel',serif;font-size:60px;font-weight:700;color:var(--gold);line-height:1;text-shadow:0 0 24px rgba(212,160,64,.35)}
@@ -290,6 +326,7 @@ select option{background:var(--card2)}
   <div class="section" id="sec-conditions"></div>
   <div class="section" id="sec-notes"></div>
   <div class="section" id="sec-dice"></div>
+  <div class="section" id="sec-audio"></div>
 </div>
 
 <nav id="bottom-nav">
@@ -302,6 +339,7 @@ select option{background:var(--card2)}
   <button class="ntab" data-s="conditions" onclick="showSection('conditions')"><span class="ntab-icon">💀</span><span class="ntab-lbl">Status</span></button>
   <button class="ntab" data-s="notes" onclick="showSection('notes')"><span class="ntab-icon">📝</span><span class="ntab-lbl">Notes</span></button>
   <button class="ntab" data-s="dice" onclick="showSection('dice')"><span class="ntab-icon">🎲</span><span class="ntab-lbl">Dice</span></button>
+  <button class="ntab" data-s="audio" onclick="showSection('audio')"><span class="ntab-icon">🔊</span><span class="ntab-lbl">Audio</span></button>
 </nav>
 
 <div id="toast"></div>
@@ -482,7 +520,7 @@ function condEffectsBoxHTML(){
 
 // ─── BARD FEATURES ────────────────────
 const BARD_FEATS=[
-  {name:'Bardic Inspiration',lv:1,desc:'Bonus Action: grant a d8 die to a creature within 60 ft. It adds it to an attack, check, or save within 1 hour. 4 uses/rest.'},
+  {name:'Bardic Inspiration',lv:1,desc:'Bonus Action: grant a d8 die to a creature within 60 ft. It adds it to an attack, check, or save within 1 hour. 4 uses/rest.', long_desc:'You can supernaturally inspire others through words, music, or dance. This inspiration is represented by your Bardic Inspiration die, which is a d6. Using Bardic Inspiration. As a Bonus Action, you can inspire another creature within 60 feet of yourself who can see or hear you. That creature gains one of your Bardic Inspiration dice. A creature can have only one Bardic Inspiration die at a time. Once within the next hour when the creature fails a D20 Test, the creature can roll the Bardic Inspiration die and add the number rolled to the d20, potentially turning the failure into a success. A Bardic Inspiration die is expended when its rolled. Number of Uses. You can confer a Bardic Inspiration die a number of times equal to your Charisma modifier (minimum of once), and you regain all expended uses when you finish a Long Rest. At Higher Levels. Your Bardic Inspiration die changes when you reach certain Bard levels, as shown in the Bardic Die column of the Bard Features table. The die becomes a d8 at level 5, a d10 at level 10, and a d12 at level 15.'},
   {name:'Jack of All Trades',lv:2,desc:'Add +1 (half prof) to any ability check you are not proficient in.'},
   {name:'Song of Rest',lv:2,desc:'Friendly creatures who can hear you regain an extra 1d8 HP when spending Hit Dice during a short rest.'},
   {name:'Expertise',lv:3,desc:'Double proficiency bonus for Deception, Persuasion, Performance, Perception (★★ in Skills).'},
@@ -963,7 +1001,29 @@ ${condEffectsBoxHTML()}
   }).join('')}
   <div class="muted txs mt8">★★ Expertise · ★ Proficiency · unmarked = +1 (JoAT)</div>
 </div>
-<div class="card"><div class="ctitle">Class Features (Level 8)</div>${BARD_FEATS.map(f=>`<div class="feat-card"><div class="feat-name">${f.name} <span class="muted" style="font-weight:400">(Lv${f.lv})</span></div><div class="feat-desc">${f.desc}</div></div>`).join('')}</div>
+<div class="card">
+    <div class="ctitle">Class Features (Level 8)</div>
+
+    ${BARD_FEATS.map(f=>`
+        <div class="feat-card">
+            <div class="feat-name">
+                ${f.name}
+                <span class="muted" style="font-weight:400">(Lv${f.lv})</span>
+            </div>
+
+            <div class="feat-desc">${f.desc}</div>
+
+            ${f.long_desc ? `
+                <details class="feat-details">
+                    <summary>Ver más</summary>
+                    <div class="feat-long-desc">
+                        ${f.long_desc}
+                    </div>
+                </details>
+            ` : ''}
+        </div>
+    `).join('')}
+</div>
 <div class="card"><div class="ctitle">Exhaustion Level</div>
   <div class="row" style="gap:12px;align-items:center">
     <button class="ab d" onclick="adjExhaustion(-1)" style="max-width:50px">−</button>
@@ -1132,5 +1192,56 @@ function init(){
 }
 document.addEventListener('DOMContentLoaded',init);
 </script>
-</body>
+
+<script>
+(function(){
+const oldRender=window.renderSection;
+window.audioDB=null;
+function openDB(){
+ return new Promise((res,rej)=>{
+  const r=indexedDB.open('folk_audio_db',1);
+  r.onupgradeneeded=e=>{
+   const db=e.target.result;
+   if(!db.objectStoreNames.contains('files')) db.createObjectStore('files',{keyPath:'id'});
+  };
+  r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
+ });
+}
+async function getAll(){
+ const db=window.audioDB||(window.audioDB=await openDB());
+ return new Promise(res=>{
+  const tx=db.transaction('files','readonly');
+  const req=tx.objectStore('files').getAll();
+  req.onsuccess=()=>res(req.result||[]);
+ });
+}
+async function saveFile(f,type){
+ const db=window.audioDB||(window.audioDB=await openDB());
+ const buf=await f.arrayBuffer();
+ const tx=db.transaction('files','readwrite');
+ tx.objectStore('files').put({id:crypto.randomUUID(),name:f.name,type,blob:new Blob([buf],{type:f.type})});
+}
+window.renderAudio=async function(){
+ const el=document.getElementById('sec-audio'); if(!el) return;
+ const files=await getAll();
+ el.innerHTML=`<div class="card"><h2>🔊 Audio Manager</h2>
+ <div style="border:2px dashed #8a6;padding:16px;border-radius:12px;text-align:center;margin:10px 0">Arrastrá MP3 aquí o seleccioná archivos<br><input id="audFiles" type="file" multiple accept="audio/*"></div>
+ <div id="audioList"></div></div>`;
+ const zone=el.querySelector('.card');
+ zone.ondragover=e=>e.preventDefault();
+ zone.ondrop=async e=>{e.preventDefault(); for(const f of e.dataTransfer.files) await saveFile(f,'audio'); renderAudio();};
+ el.querySelector('#audFiles').onchange=async e=>{for(const f of e.target.files) await saveFile(f,'audio'); renderAudio();};
+ const list=el.querySelector('#audioList');
+ files.forEach(f=>{
+  const url=URL.createObjectURL(f.blob);
+  const d=document.createElement('div');
+  d.style.margin='8px 0';
+  d.innerHTML=`<div style="color:#d4af37">${f.name}</div><audio controls style="width:100%" src="${url}"></audio>`;
+  list.appendChild(d);
+ });
+ };
+ const oldShow=window.showSection;
+ window.showSection=function(s){ oldShow(s); if(s==='audio') setTimeout(renderAudio,50); };
+})();
+</script></body>
 </html>
