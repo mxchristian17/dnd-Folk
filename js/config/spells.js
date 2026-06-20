@@ -1,0 +1,16 @@
+// ─── SPELLS ───────────────────────────
+const SPELLS_DB={
+  'Vicious Mockery':{lv:0,school:'Enchantment',ct:'1 Action',range:'60 ft',comp:'V',dur:'Instantaneous',conc:false,dmg:'2d4 psychic',save:'WIS',tags:['damage','control'],desc:'WIS save DC 16 or take 2d4 psychic damage and have disadvantage on its next attack roll.',upc:'3d4 (lv5) · 4d4 (lv11) · 5d4 (lv17)'},
+  'Mage Hand':{lv:0,school:'Conjuration',ct:'1 Action',range:'30 ft',comp:'V, S',dur:'1 minute',conc:false,tags:['utility'],desc:'Spectral floating hand. Manipulate objects up to 10 lbs, open unlocked containers, pour vials. Cannot attack.'},
+  'Minor Illusion':{lv:0,school:'Illusion',ct:'1 Action',range:'30 ft',comp:'S, M',dur:'1 minute',conc:false,tags:['utility'],desc:'Create a sound or image (5 ft cube). INT check DC 13 to identify as illusory.'},
+  'Command':{lv:1,school:'Enchantment',ct:'1 Action',range:'60 ft',comp:'V',dur:'1 round',conc:false,save:'WIS',tags:['control'],special:'⚡ VARA: Free use 1×/Long Rest. +1 creature if command is a rhyme.',desc:'One-word command to a creature. WIS save DC 16 or follow the command on its next turn.',upc:'+1 creature per slot level above 1st'},
+  'Healing Word':{lv:1,school:'Evocation',ct:'1 Bonus Action',range:'60 ft',comp:'V',dur:'Instantaneous',conc:false,dmg:'1d4+4 healing',tags:['healing'],desc:'A creature regains 1d4+4 HP. Cast as Bonus Action.',upc:'+1d4 per slot level above 1st'},
+  'Heroism':{lv:1,school:'Enchantment',ct:'1 Action',range:'Touch',comp:'V, S',dur:'Conc., 1 minute',conc:true,tags:['support'],desc:'Target immune to Frightened + gains 4 temp HP at start of each of its turns.',upc:'+1 creature per slot level above 1st'},
+  'Dissonant Whispers':{lv:1,school:'Enchantment',ct:'1 Action',range:'60 ft',comp:'V',dur:'Instantaneous',conc:false,dmg:'3d6 psychic',save:'WIS',tags:['damage','control'],desc:'WIS save DC 16 or take 3d6 psychic damage and use Reaction to flee at full speed.',upc:'+1d6 per slot level above 1st'},
+  'Suggestion':{lv:2,school:'Enchantment',ct:'1 Action',range:'30 ft',comp:'V, M',dur:'Conc., 8 hours',conc:true,save:'WIS',tags:['control','roleplay'],desc:'Reasonable suggestion (1-2 sentences). WIS save DC 16 or follow it.'},
+  'Hold Person':{lv:2,school:'Enchantment',ct:'1 Action',range:'60 ft',comp:'V, S, M',dur:'Conc., 1 minute',conc:true,save:'WIS',tags:['control'],desc:'Humanoid paralyzed. WIS save DC 16 or Paralyzed. Repeat save each turn. Attacks ADV; melee hits in 5 ft are crits.',upc:'+1 creature per slot level above 2nd'},
+  'Hypnotic Pattern':{lv:3,school:'Illusion',ct:'1 Action',range:'120 ft',comp:'S, M',dur:'Conc., 1 minute',conc:true,save:'WIS',tags:['control','aoe'],desc:'30 ft cube of colors. WIS save DC 16 or Charmed (Incapacitated, speed 0). Ends on damage or if shaken.'},
+  'Counterspell':{lv:3,school:'Abjuration',ct:'1 Reaction',range:'60 ft',comp:'S',dur:'Instantaneous',conc:false,tags:['reaction'],special:'🔮 Magical Secrets · War Caster: use as Opportunity Attack',desc:'Auto-counter spell lv3 or lower. For lv4+: ATK roll DC 10 + spell level.'},
+  'Dispel Magic':{lv:3,school:'Abjuration',ct:'1 Action',range:'120 ft',comp:'V, S',dur:'Instantaneous',conc:false,tags:['utility'],special:'🔮 Magical Secrets',desc:'End any spell lv3 or lower on target. For lv4+: spellcasting ability check DC 10 + spell level.'},
+};
+
