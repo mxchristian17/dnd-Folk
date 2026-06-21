@@ -257,6 +257,16 @@ function spellCardHTML(name,sp){
     </div>
     <div class="spell-desc">
       <p style="margin-bottom:6px">${sp.desc}</p>
+      ${(sp.long_desc || sp.long_desc_spa) ? `
+        <details class="feat-details" onclick="event.stopPropagation()">
+          <summary>English</summary>
+          <div class="feat-long-desc">${sp.long_desc || ''}</div>
+        </details>
+        <details class="feat-details" onclick="event.stopPropagation()">
+          <summary>Español</summary>
+          <div class="feat-long-desc">${sp.long_desc_spa || sp.long_desc || ''}</div>
+        </details>
+      ` : ''}
       ${sp.special?`<div class="spec-note">${sp.special}</div>`:''}
       ${sp.upc?`<div class="up-note">↑ ${sp.upc}</div>`:''}
       <div class="cast-actions">${castBtns}</div>

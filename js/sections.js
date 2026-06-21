@@ -103,7 +103,16 @@ function spellbookHTML(){
   function matchF(sp){if(spellFilter==='all')return true;if(spellFilter==='cantrip')return sp.lv===0;if(['1','2','3','4'].includes(spellFilter))return sp.lv===parseInt(spellFilter);if(spellFilter==='conc')return sp.conc;if(spellFilter==='control')return sp.tags?.includes('control');if(spellFilter==='heal')return sp.tags?.includes('healing');return true;}
   const customHTML=S.customSpells.filter(sp=>matchF(sp)).map(sp=>{
     const lid=sp.name.replace(/[^a-zA-Z0-9]/g,'_');const badge=['Cantrip','Level 1','Level 2','Level 3','Level 4'][sp.lv]||'Cantrip';
-    return`<div class="spell-card" id="sc-${lid}" onclick="toggleSpellCard('${lid}')"><div class="row jb" style="gap:8px;margin-bottom:4px"><div><div class="spell-name">${sp.name}</div><div style="font-size:12px;color:var(--txt3)">${sp.school} · ${sp.ct}</div></div><div style="display:flex;gap:4px;align-items:center"><span class="spell-badge badge-${sp.lv}">${badge}</span><button style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px" onclick="removeCustomSpell('${sp.name}');event.stopPropagation()">✕</button></div></div><div class="spell-meta"><span class="stag">🕐 ${sp.ct}</span><span class="stag">📏 ${sp.range}</span><span class="stag">⏱ ${sp.dur}</span></div><div class="spell-desc"><p>${sp.desc}</p><div class="cast-actions">${sp.lv===0?`<button class="cast-btn" onclick="castSpell('${sp.name}',0);event.stopPropagation()">Cast</button>`:`<button class="cast-btn" onclick="castSpell('${sp.name}',${sp.lv});event.stopPropagation()">Cast Lv${sp.lv}</button>`}</div></div></div>`;
+    return`<div class="spell-card" id="sc-${lid}" onclick="toggleSpellCard('${lid}')"><div class="row jb" style="gap:8px;margin-bottom:4px"><div><div class="spell-name">${sp.name}</div><div style="font-size:12px;color:var(--txt3)">${sp.school} · ${sp.ct}</div></div><div style="display:flex;gap:4px;align-items:center"><span class="spell-badge badge-${sp.lv}">${badge}</span><button style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px" onclick="removeCustomSpell('${sp.name}');event.stopPropagation()">✕</button></div></div><div class="spell-meta"><span class="stag">🕐 ${sp.ct}</span><span class="stag">📏 ${sp.range}</span><span class="stag">⏱ ${sp.dur}</span></div><div class="spell-desc"><p>${sp.desc}</p>${(sp.long_desc || sp.long_desc_spa) ? `
+        <details class="feat-details" onclick="event.stopPropagation()">
+          <summary>English</summary>
+          <div class="feat-long-desc">${sp.long_desc || ''}</div>
+        </details>
+        <details class="feat-details" onclick="event.stopPropagation()">
+          <summary>Español</summary>
+          <div class="feat-long-desc">${sp.long_desc_spa || sp.long_desc || ''}</div>
+        </details>
+      ` : ''}<div class="cast-actions">${sp.lv===0?`<button class="cast-btn" onclick="castSpell('${sp.name}',0);event.stopPropagation()">Cast</button>`:`<button class="cast-btn" onclick="castSpell('${sp.name}',${sp.lv});event.stopPropagation()">Cast Lv${sp.lv}</button>`}</div></div></div>`;
   }).join('');
   return`
 <div class="sec-title">📖 Folk's Spellbook</div>
@@ -153,11 +162,17 @@ ${condEffectsBoxHTML()}
 
             <div class="feat-desc">${f.desc}</div>
 
-            ${f.long_desc ? `
+            ${f.long_desc || f.long_desc_spa ? `
                 <details class="feat-details">
-                    <summary>Ver más</summary>
+                    <summary>English</summary>
                     <div class="feat-long-desc">
-                        ${f.long_desc}
+                        ${f.long_desc || ''}
+                    </div>
+                </details>
+                <details class="feat-details">
+                    <summary>Español</summary>
+                    <div class="feat-long-desc">
+                        ${f.long_desc_spa || f.long_desc || ''}
                     </div>
                 </details>
             ` : ''}
