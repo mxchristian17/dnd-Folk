@@ -1,7 +1,8 @@
 // ─── INIT ─────────────────────────────
 function init(){
   loadS();
-  renderSection('dashboard');
+  const initialSection=(location.hash||'').replace('#','')||'dashboard';
+  showSection(document.getElementById('sec-'+initialSection)?initialSection:'dashboard');
   updateHeaderHP();
   updateCondBanner();
 }

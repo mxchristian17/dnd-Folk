@@ -66,6 +66,7 @@
   }
 
   function audioUrl(file){
+    if(file.url) return encodeURI(file.url);
     if(!objectUrls.has(file.id)) objectUrls.set(file.id,URL.createObjectURL(file.blob));
     return objectUrls.get(file.id);
   }
@@ -101,10 +102,11 @@
   }
 
   function rowHTML(file){
+    const canDelete=!file.url;
     return `<div class="audio-name">${file.name}</div>
       <div class="audio-row-actions">
         <audio controls preload="metadata" src="${audioUrl(file)}"></audio>
-        <button class="btn dan audio-delete" type="button" data-audio-delete="${file.id}">Borrar</button>
+        ${canDelete?`<button class="btn dan audio-delete" type="button" data-audio-delete="${file.id}">Borrar</button>`:'<span class="audio-source">audio/</span>'}
       </div>`;
   }
 
@@ -170,7 +172,8 @@
       bindEvents(el);
       initialized=true;
     }
-    const files=await getAll();
+    const defaultFiles=Array.isArray(window.DEFAULT_AUDIO_FILES)?window.DEFAULT_AUDIO_FILES:[];
+    const files=[...defaultFiles,...await getAll()];
     files.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).forEach(appendFile);
   };
 

@@ -307,4 +307,5 @@ select option{background:var(--card2)}
 .audio-row-actions{display:flex;align-items:center;gap:8px}
 .audio-row-actions audio{width:100%;min-width:0}
 .audio-delete{padding:7px 9px;font-size:10px;flex-shrink:0}
+.audio-source{font-family:'Cinzel',serif;font-size:9px;color:var(--txt3);border:1px solid var(--border);border-radius:var(--r);padding:6px 8px;flex-shrink:0}
 @media (min-width:760px){.audio-grid{grid-template-columns:repeat(2,1fr)}}

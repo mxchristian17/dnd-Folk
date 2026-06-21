@@ -1,0 +1,16 @@
+window.DEFAULT_AUDIO_FILES=[
+  {id:'asset-redoble-11s',name:'Redoble-11s.mp3',category:'effect',url:'audio/Redoble-11s.mp3'},
+  {id:'asset-2m15s-tambor-tension',name:'2m15s-Tambor-tension.wav',category:'music',url:'audio/2m15s-Tambor-tension.wav'},
+  {id:'asset-1m15s-harmonica-fogon-depre',name:'1m15s-Harmonica-Fogon-Depre.wav',category:'music',url:'audio/1m15s-Harmonica-Fogon-Depre.wav'},
+  {id:'asset-33s-harmonica-test-mp3',name:'33s-Harmonica-test.mp3',category:'music',url:'audio/33s-Harmonica-test.mp3'},
+  {id:'asset-31s-harmonica-sleep',name:'31s-Harmonica-sleep.mp3',category:'music',url:'audio/31s-Harmonica-sleep.mp3'},
+  {id:'asset-harmonica-himno',name:'Harmonica-himno.mp3',category:'music',url:'audio/Harmonica-himno.mp3'},
+  {id:'asset-39s-harmonica-casual',name:'39s-Harmonica-casual.mp3',category:'music',url:'audio/39s-Harmonica-casual.mp3'},
+  {id:'asset-4m5s-tambor-fondo-batalla',name:'4m5s-Tambor-fondo-batalla.wav',category:'music',url:'audio/4m5s-Tambor-fondo-batalla.wav'},
+  {id:'asset-1m16s-harmonica-casual',name:'1m16s-Harmonica-casual.mp3',category:'music',url:'audio/1m16s-Harmonica-casual.mp3'},
+  {id:'asset-8s-redoble-prebatalla',name:'8s-Redoble-prebatalla.mp3',category:'effect',url:'audio/8s-Redoble-prebatalla.mp3'},
+  {id:'asset-tambor-batalla-3m45s',name:'Tambor-batalla-3m45s.mp3',category:'music',url:'audio/Tambor-batalla-3m45s.mp3'},
+  {id:'asset-38s-harmonica-desafinada',name:'38s-Harmonica-desafinada.wav',category:'effect',url:'audio/38s-Harmonica-desafinada.wav'},
+  {id:'asset-2m5s-tambor-war-orco',name:'2m5s-Tambor-war-orco.mp3',category:'music',url:'audio/2m5s-Tambor-war-orco.mp3'},
+  {id:'asset-33s-harmonica-test-wav',name:'33s-Harmonica-test.wav',category:'music',url:'audio/33s-Harmonica-test.wav'}
+];
